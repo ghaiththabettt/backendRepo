@@ -1,0 +1,54 @@
+<section class="content" [class.sidebar-visible]="isSidebarVisible">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="'Departments'" [items]="['HR']" [active_item]="'Departments'"></app-breadcrumb>
+    </div>
+    <div class="card">
+      <div class="header">
+        <h2>Departments</h2>
+      </div>
+      <div class="body">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+          <!-- Department Name -->
+          <ng-container matColumnDef="departmentName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Department Name</th>
+            <td mat-cell *matCellDef="let dept">{{ dept.departmentName }}</td>
+          </ng-container>
+          <!-- Phone -->
+          <ng-container matColumnDef="phone">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
+            <td mat-cell *matCellDef="let dept">{{ dept.phone }}</td>
+          </ng-container>
+          <!-- Email -->
+          <ng-container matColumnDef="emailDept">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+            <td mat-cell *matCellDef="let dept">{{ dept.emailDept }}</td>
+          </ng-container>
+          <!-- Total Employees -->
+          <ng-container matColumnDef="totalEmployees">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Employees</th>
+            <td mat-cell *matCellDef="let dept">{{ dept.totalEmployees }}</td>
+          </ng-container>
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let dept">
+              <button mat-icon-button color="primary" (click)="viewTrainings(dept)" matTooltip="View Trainings">
+                <mat-icon>school</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="viewEmployees(dept)" matTooltip="View Employees">
+                <mat-icon>people</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="viewPolicies(dept)" matTooltip="View Policies">
+                <mat-icon>policy</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </div>
+</section>

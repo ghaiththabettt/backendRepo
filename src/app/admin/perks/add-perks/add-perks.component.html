@@ -1,0 +1,96 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <ul class="breadcrumb breadcrumb-style">
+            <li>
+              <h4 class="page-title">Add Perks</h4>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <div class="card">
+          <div class="header">
+            <h2>Add New Perks</h2>
+          </div>
+          <div class="body add-perks-form">
+            <form [formGroup]="perksForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Employee</mat-label>
+                    <mat-select formControlName="employeeId" required>
+                      <mat-option *ngFor="let employee of employees" [value]="employee.id">
+                        {{ employee.name }} {{ employee.lastName }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="perksForm.get('employeeId')?.hasError('required')">
+                      Employee ID is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Perks Type</mat-label>
+                    <mat-select formControlName="perksType" required>
+                      <mat-option *ngFor="let type of perksTypes" [value]="type">
+                        {{ type }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="perksForm.get('perksType')?.hasError('required')">
+                      Perks type is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Date</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="datePerks" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="perksForm.get('datePerks')?.hasError('required')">
+                      Date is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Reason</mat-label>
+                    <textarea matInput formControlName="reason" required></textarea>
+                    <mat-error *ngIf="perksForm.get('reason')?.hasError('required')">
+                      Reason is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                  <button mat-raised-button color="primary" type="submit" [disabled]="!perksForm.valid">
+                    Submit
+                  </button>
+                  <button mat-raised-button color="warn" type="button" [routerLink]="['/admin/perks/all-perks']">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

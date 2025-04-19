@@ -1,0 +1,134 @@
+/* Style global de la page et décalage lors de l'affichage du sidebar */
+.content {
+  transition: margin-left 0.3s ease;
+  margin-left: 0; /* Par défaut, sidebar masquée */
+}
+
+.content.sidebar-visible {
+  margin-left: 250px; /* Ajustez cette valeur selon la largeur de votre sidebar */
+}
+
+/* Bloc de contenu général */
+.content-block {
+  padding: 20px;
+}
+
+/* Style du card */
+.card {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+}
+
+/* En-tête de la table */
+.materialTableHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header-buttons-left {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.header-buttons-left li.tbl-title h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.tbl-search-box {
+  margin-left: 20px;
+}
+
+.search-field {
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Boutons à droite */
+.tbl-export-btn {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.tbl-export-btn li {
+  margin-left: 10px;
+}
+
+/* Table responsive */
+.overflow-auto {
+  overflow-x: auto;
+}
+
+.responsive_table {
+  width: 100%;
+}
+
+.advance-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.advance-table mat-header-cell,
+.advance-table mat-cell {
+  padding: 8px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Colonne sticky (Name) */
+.mat-header-cell[sticky],
+.mat-cell[sticky] {
+  position: sticky;
+  left: 0;
+  background: #fff;
+  z-index: 2;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Spinner */
+.tbl-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Aucun résultat */
+.no-results {
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+  color: #999;
+}
+
+/* Troncature du texte */
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Labels pour mobile */
+.mobile-label {
+  display: none;
+}
+
+/* Pour affichage mobile, on peut afficher les labels */
+@media (max-width: 768px) {
+  .mobile-label {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+}

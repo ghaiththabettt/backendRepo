@@ -1,0 +1,42 @@
+.content {
+  transition: margin-left 0.3s ease;
+  margin-left: 0;
+}
+.content.sidebar-visible {
+  margin-left: 250px;
+}
+.content-block {
+  padding: 20px;
+}
+.card {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.header {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.body {
+  padding: 15px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.mat-header-cell,
+.mat-cell {
+  padding: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+td:last-child,
+th:last-child {
+  text-align: center;
+}
+button {
+  margin: 0 4px;
+}

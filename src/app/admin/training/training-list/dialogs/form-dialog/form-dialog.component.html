@@ -1,0 +1,17 @@
+<div mat-dialog-content>
+  <h2 mat-dialog-title>Modify Training for {{ data.name }} {{ data.lastName }}</h2>
+
+  <mat-form-field class="w-full" appearance="outline">
+    <mat-label>Select New Training</mat-label>
+    <mat-select [(ngModel)]="selectedTrainingId">
+      <mat-option *ngFor="let training of trainings" [value]="training.trainingId">
+        {{ training.trainingName }} ({{ training.trainingType }}) - {{ training.startDate }} to {{ training.endDate }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="primary" (click)="updateTraining()">Save</button>
+</mat-dialog-actions>

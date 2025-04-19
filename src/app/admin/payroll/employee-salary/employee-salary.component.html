@@ -1,0 +1,202 @@
+<section class="content" [class.sidebar-visible]="isSidebarVisible">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb
+        [title]="'Employee Salary'"
+        [items]="['Payroll']"
+        [active_item]="'Employee Salary'">
+      </app-breadcrumb>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <!-- En-tête de la table -->
+          <div class="materialTableHeader">
+            <div class="left">
+              <ul class="header-buttons-left ms-0">
+                <li class="tbl-title">
+                  <h2>Employee Salary</h2>
+                </li>
+                <li class="tbl-search-box">
+                  <label for="search-input">
+                    <i class="material-icons search-icon">search</i>
+                  </label>
+                  <input
+                    id="search-input"
+                    placeholder="Search"
+                    type="text"
+                    #filter
+                    (keyup)="applyFilter($event)"
+                    class="browser-default search-field"
+                    aria-label="Search box">
+                </li>
+              </ul>
+            </div>
+            <div class="right">
+              <ul class="tbl-export-btn">
+                <!-- Bouton Ajouter -->
+                <li class="tbl-header-btn">
+                  <div class="m-l-10">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="openDialog()"
+                      matTooltip="Add Payroll">
+                      <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                  </div>
+                </li>
+                <!-- Bouton Refresh -->
+                <li class="tbl-header-btn">
+                  <div class="m-l-10">
+                    <button
+                      mat-icon-button
+                      (click)="load()"
+                      matTooltip="Refresh">
+                      <mat-icon>refresh</mat-icon>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- Contenu de la table -->
+          <div class="overflow-auto">
+            <div class="responsive_table">
+              <table
+                mat-table
+                [dataSource]="dataSource"
+                matSort
+                class="advance-table mat-cell">
+                
+                <!-- Colonne Nom (sticky) -->
+                <ng-container matColumnDef="employeeName">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header sticky>
+                    <span class="truncate-text">Name</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row" sticky [matTooltip]="row.employeeName">
+                    <span class="mobile-label">Name:</span>
+                    <span class="truncate-text">{{ row.employeeName }}</span>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Colonne Department -->
+                <ng-container matColumnDef="employeeDepartment">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">Department</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matTooltip]="row.employeeDepartment">
+                    <span class="mobile-label">Department:</span>
+                    <span class="truncate-text">{{ row.employeeDepartment }}</span>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Colonne Basic Salary -->
+                <ng-container matColumnDef="basicSalary">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">Basic Salary</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Basic Salary:</span>
+                    <span class="truncate-text">{{ row.basicSalary }}</span>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Colonne Bonuses -->
+                <ng-container matColumnDef="bonuses">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">Bonuses</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Bonuses:</span>
+                    <span class="truncate-text">{{ row.bonuses }}</span>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Colonne Deductions -->
+                <ng-container matColumnDef="deductions">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">Deductions</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Deductions:</span>
+                    <span class="truncate-text">{{ row.deductions }}</span>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Colonne Total Salary -->
+                <ng-container matColumnDef="totalSalary">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">Total Salary</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Total Salary:</span>
+                    <span class="truncate-text">{{ row.totalSalary }}</span>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Colonne Pay Date -->
+                <ng-container matColumnDef="payDate">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">Pay Date</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <span class="mobile-label">Pay Date:</span>
+                    <span class="truncate-text">{{ row.payDate | date:'mediumDate' }}</span>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Colonne Actions -->
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>
+                    Actions
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <button
+                      mat-icon-button
+                      color="accent"
+                      (click)="openDialog(row)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="delete(row.payrollId)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-cell>
+                </ng-container>
+                
+                <!-- Lignes d'en-tête et de données -->
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer"></mat-row>
+              </table>
+              
+              <!-- Spinner de chargement -->
+              <div *ngIf="isLoading" class="tbl-spinner">
+                <mat-progress-spinner
+                  color="primary"
+                  [diameter]="40"
+                  mode="indeterminate">
+                </mat-progress-spinner>
+              </div>
+              
+              <!-- Message "No results" -->
+              <div *ngIf="!isLoading && dataSource.data.length === 0" class="no-results">
+                No results
+              </div>
+              
+              <!-- Paginator -->
+              <mat-paginator
+                [length]="dataSource.filteredData.length"
+                [pageIndex]="0"
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

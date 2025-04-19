@@ -1,0 +1,315 @@
+
+.navbar {
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+  
+      .timer {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #4a5568;
+      }
+  
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+  
+        &:hover {
+          transform: scale(1.1);
+        }
+  
+        &.btn-success {
+          background-color: #48bb78;
+        }
+  
+        &.btn-warning {
+          background-color: #ecc94b;
+        }
+  
+        &.btn-danger {
+          background-color: #f56565;
+        }
+      }
+    }
+  }
+  // Adaptez les sélecteurs à votre structure HTML exacte si elle diffère
+
+nav.navbar { // Ou le sélecteur de votre barre de navigation principale
+
+  // Section Pointage
+  .nav-item {
+    // Pour les contrôles du timer
+    .timer-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem; // Espace entre timer et boutons
+
+      .timer {
+        font-size: 1rem; // Ajustez taille
+        font-weight: 500; // Ou bold
+        min-width: 70px; // Pour éviter que la taille saute trop
+        text-align: right;
+        color: var(--header-text-color); // Utilisez variable thème si possible
+      }
+
+      // Style commun pour mini-fab boutons
+      button[mat-mini-fab] {
+        width: 32px;
+        height: 32px;
+        line-height: 32px; // Centrer icône verticalement
+
+        .mat-icon {
+          font-size: 18px; // Taille de l'icône
+          height: 18px;
+          width: 18px;
+          line-height: 18px;
+        }
+
+        // Ajout pour un meilleur effet visuel
+         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+         transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+
+         &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+         }
+         &:active {
+             transform: translateY(0px);
+             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+         }
+         &:disabled {
+             cursor: not-allowed;
+             opacity: 0.6;
+             box-shadow: none;
+         }
+      }
+
+      // Vous pouvez enlever les couleurs spécifiques si vous utilisez color="primary", "accent", "warn"
+      /*
+      .pause-button { }
+      .stop-button { }
+      .resume-button { }
+      */
+    }
+
+     // Style pour le bouton Start (peut-être différent des mini-fab)
+    .start-button {
+       // Ajustez si nécessaire
+       // Exemple: couleur spécifique si vous n'utilisez pas color="primary"
+       // background-color: #28a745; // Vert pour démarrer
+       // color: white;
+
+       width: 40px; // Taille du bouton Play principal
+       height: 40px;
+       line-height: 40px;
+
+       .mat-icon {
+         font-size: 24px;
+         height: 24px;
+         width: 24px;
+         line-height: 24px;
+       }
+
+       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+       &:hover {
+          transform: scale(1.05) translateY(-1px);
+          box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+       }
+        &:active {
+             transform: scale(1.0) translateY(0px);
+             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+         }
+    }
+
+  } // Fin .nav-item
+
+} // Fin nav.navbar
+
+// ... styles existants ...
+
+// Styles pour le formulaire/modal de pause
+.pause-form-overlay {
+  position: fixed; // Position fixe par rapport à la fenêtre
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); // Fond semi-transparent
+  display: flex;
+  align-items: center; // Centre verticalement
+  justify-content: center; // Centre horizontalement
+  z-index: 1050; // Assurez-vous qu'il est au-dessus des autres éléments
+}
+
+.pause-form-container {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  min-width: 300px; // Largeur minimale
+  max-width: 500px; // Largeur maximale
+  z-index: 1051;
+
+  h5 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    // Styles simples pour select/textarea (à adapter si vous utilisez Material ou autre)
+    select, textarea {
+       width: 100%;
+       padding: 0.5rem 0.75rem;
+       border: 1px solid #ced4da;
+       border-radius: 0.25rem;
+       font-size: 1rem;
+
+       &:focus {
+          border-color: #86b7fe;
+          outline: 0;
+          box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+       }
+    }
+     // Styles Bootstrap comme exemples - importez Bootstrap si utilisé
+     // .form-select {}
+     // .form-control {}
+
+  } // Fin .form-group
+
+  .pause-form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end; // Boutons à droite
+
+    // Styles simples pour boutons (à adapter)
+    button {
+       padding: 0.5rem 1rem;
+       border: none;
+       border-radius: 0.25rem;
+       cursor: pointer;
+
+       &.btn-secondary { // Style Annuler
+           background-color: #6c757d;
+           color: white;
+       }
+        &.btn-primary { // Style Valider
+           background-color: #0d6efd;
+           color: white;
+       }
+        &:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+       }
+        // Styles Bootstrap comme exemples - importez Bootstrap si utilisé
+       // &.btn {}
+       // &.me-2 {}
+
+    } // Fin button
+  } // Fin .pause-form-actions
+
+} // Fin .pause-form-container
+
+// header.component.scss
+// ... styles existants pour .pause-form... ...
+
+// Styles pour le formulaire/modal de Démarrage
+.start-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; // Même z-index que l'autre modal (ils ne s'afficheront pas en même temps)
+}
+
+.start-form-container {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  min-width: 300px;
+  max-width: 500px;
+  z-index: 1051;
+
+  h5 { /* ... style titre ... */ }
+
+  .form-group {
+     margin-bottom: 1rem;
+     label { /* ... style label ... */ }
+     select, textarea { /* ... style champs ... */ }
+     // .form-select {}
+     // .form-control {}
+  }
+
+  .start-form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+
+       &.btn-secondary { background-color: #6c757d; color: white; }
+       &.btn-success { background-color: #198754; color: white; } // Vert pour Démarrer
+       &:disabled { opacity: 0.65; cursor: not-allowed; }
+       // &.btn {}
+       // &.me-2 {}
+     }
+  }
+  // Style pour spinner (si vous l'utilisez)
+  .spinner-border {
+      display: inline-block;
+      width: 1rem; /* Adjust size */
+      height: 1rem; /* Adjust size */
+      vertical-align: -0.125em;
+      border: .2em solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      -webkit-animation: .75s linear infinite spinner-border;
+      animation: .75s linear infinite spinner-border;
+  }
+
+} // Fin .start-form-container
+
+// Keyframes pour l'animation du spinner Bootstrap (si vous ne l'avez pas)
+@-webkit-keyframes spinner-border { to { transform: rotate(360deg); } }
+@keyframes spinner-border { to { transform: rotate(360deg); } }
+.visually-hidden { /* Style Bootstrap pour cacher texte pour lecteurs écran */
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.text-center { text-align: center !important; }
+.my-2 { margin-top: .5rem !important; margin-bottom: .5rem !important; }
+.ms-2 { margin-left: .5rem !important; }
+.text-muted { color: #6c757d !important; }
+.text-primary { color: #0d6efd !important; }

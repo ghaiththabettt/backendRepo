@@ -1,0 +1,119 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="'Historique des Pointages'" [items]="['Pointages']" [active_item]="'Historique'">
+      </app-breadcrumb>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="materialTableHeader">
+            <!-- ... partie gauche (titre, recherche) ... -->
+            <div class="left">
+                 <ul class="header-buttons-left ms-0">
+                    <li class="tbl-title"> <h2>Historique</h2> </li>
+                    <li class="tbl-search-box">
+                        <label for="search-input"><i class="material-icons search-icon">search</i></label>
+                        <input placeholder="Rechercher..." type="text" #filter (keyup)="applyFilter($event)"
+                              class="browser-default search-field" aria-label="Search box">
+                    </li>
+                  </ul>
+            </div>
+
+            <div class="right">
+              <ul class="tbl-export-btn">
+                <!-- Filtre colonnes CORRIGÉ -->
+                <li class="tbl-header-btn">
+                   <div class="m-l-10" matTooltip="Afficher/Masquer Colonnes">
+                      <!-- Ce bouton ouvre le menu MatSelect caché -->
+                      <button mat-icon-button (click)="select.open()">
+                         <mat-icon>filter_list</mat-icon>
+                      </button>
+                      <!-- Le MatSelect est juste là pour contenir les options -->
+                      <mat-select #select multiple style="display: none;">
+                        <!-- Pas de [(ngModel)] ici -->
+                         <div class="mat-select-header" style="padding: 8px 16px; font-weight: bold; border-bottom: 1px solid #ccc;">Afficher/Masquer Colonnes</div>
+                         @for (cd of columnDefinitions; track cd.def) {
+                           <!-- Utiliser mat-option pour l'accessibilité clavier, mais on contrôle la logique avec checkbox -->
+                           <mat-option style="height: auto; padding: 0;"> <!-- Style pour ne pas imposer hauteur -->
+                              <!-- Le checkbox contrôle directement la propriété 'visible' -->
+                              <mat-checkbox [(ngModel)]="cd.visible"
+                                            color="primary"
+                                            style="padding: 8px 16px; width: 100%; box-sizing: border-box;"
+                                            (ngModelChange)="onColumnVisibilityChange()"> <!-- Ajouté pour OnPush si besoin -->
+                                  {{ cd.label }}
+                              </mat-checkbox>
+                           </mat-option>
+                         }
+                       </mat-select>
+                   </div>
+                </li>
+                <!-- ... autres boutons (Refresh, Export) ... -->
+                 <li class="tbl-header-btn"><div class="m-l-10"><button mat-icon-button (click)="refresh()" matTooltip="Actualiser"><mat-icon>refresh</mat-icon></button></div></li>
+                 <li><div class="export-button m-l-10"><button mat-icon-button (click)="exportExcel()" class="col-blue" matTooltip="Exporter Excel"><mat-icon class="material-icons-outlined">file_download</mat-icon></button></div></li>
+
+              </ul>
+            </div>
+          </div>
+
+          <!-- Reste de la table (pas de changements nécessaires ici) -->
+          <div class="body">
+            <div class="responsive_table">
+              <div class="outer_table">
+                <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
+                   <!-- Définitions @for (column of columnDefinitions...) etc. comme avant -->
+                     @for (column of columnDefinitions; track column.def) {
+                         @if (column.def === 'select' || column.def === 'actions') { }
+                         @else if (column.def === 'employeeFullName') {
+                           <ng-container [matColumnDef]="column.def"><mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.label }}</mat-header-cell><mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)"><span class="mobile-label">{{ column.label }}:</span><span>{{ row.employeeFullName }}</span></mat-cell></ng-container>
+                         }
+                         @else if (column.type === 'datetime') {
+                           <ng-container [matColumnDef]="column.def"><mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.label }}</mat-header-cell><mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)"><span class="mobile-label">{{ column.label }}:</span><span>{{ row[column.def] | date:'yyyy-MM-dd HH:mm' }}</span></mat-cell></ng-container>
+                         }
+                         @else if (column.type === 'duration') {
+                           <ng-container [matColumnDef]="column.def"><mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.label }} (min)</mat-header-cell><mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)"><span class="mobile-label">{{ column.label }}:</span><span>{{ row[column.def] || 0 }} min</span></mat-cell></ng-container>
+                         }
+                         @else if (column.type === 'address') {
+                          <ng-container [matColumnDef]="column.def">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                               {{ column.label }}
+                             </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [matTooltip]="row[column.def]?.adresseComplete || '-'"> <!-- Tooltip pour adresse complète -->
+                               <span class="mobile-label">{{ column.label }}:</span>
+                                <!-- Accès à l'adresse complète via la bonne clé d'objet -->
+                                <!-- Utilise l'optional chaining (?) au cas où l'objet localisationDebut/Fin ou adresseComplete serait absent -->
+                               <span class="truncate-text"> <!-- Peut-être ajouter une classe pour tronquer si l'adresse est longue -->
+                                 {{ (column.def === 'localisationDebutAdresse' ? row.localisationDebut?.adresseComplete : row.localisationFin?.adresseComplete) || '-' }}
+                               </span>
+                            </mat-cell>
+                          </ng-container>
+                      }
+                          @else {
+                           <ng-container [matColumnDef]="column.def"><mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.label }}</mat-header-cell><mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)"><span class="mobile-label">{{ column.label }}:</span><span>{{ row[column.def] || '-' }}</span></mat-cell></ng-container>
+                         }
+                         
+                         
+                     }
+                   <!-- FIN @for -->
+
+                  <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+                  <mat-row [@rowsAnimation]="" *matRowDef="let row; columns: getDisplayedColumns();"
+                           (contextmenu)="onContextMenu($event, row)" [style.cursor]="'context-menu'" matRipple>
+                  </mat-row>
+                </table>
+              </div>
+
+               <!-- Spinner, Menu contextuel, "Aucun résultat", Paginateur -->
+              @if (isLoading) { <div class="tbl-spinner"><mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate"></mat-progress-spinner></div> }
+              <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x" [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu"></div>
+              <mat-menu #contextMenu="matMenu"><ng-template matMenuContent let-item="item"><button mat-menu-item (click)="viewDetails(item)"><mat-icon>visibility</mat-icon><span>Voir Détails</span></button><button mat-menu-item (click)="refresh()"><mat-icon>refresh</mat-icon><span>Actualiser</span></button></ng-template></mat-menu>
+               @if (!isLoading && dataSource.data.length === 0) { <div class="no-results"> Aucun pointage trouvé. </div> }
+               @if (dataSource.data.length > 0) { <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator> }
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

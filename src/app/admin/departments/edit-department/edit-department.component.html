@@ -1,0 +1,98 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <app-breadcrumb [title]="breadscrums[0].title" [items]="breadscrums[0].items" [active_item]="breadscrums[0].active"></app-breadcrumb>
+    </div>
+    <div class="row clearfix">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <div class="card">
+          <div class="header">
+            <h2>Edit Department</h2>
+          </div>
+          <div class="body">
+            <form class="m-4" [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+              <!-- Department Select -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Select Department</mat-label>
+                    <mat-select formControlName="departmentId" (selectionChange)="onDepartmentChange($event.value)" required>
+                      <mat-option *ngFor="let department of departments" [value]="department.departmentId">
+                        {{ department.departmentName }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Department Name -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Department Name</mat-label>
+                    <input matInput formControlName="departmentName" required />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Phone -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Phone</mat-label>
+                    <input matInput formControlName="phone" required />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="emailDept" required />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Trainings -->
+                <div class="row">
+                  <div class="col-12 mb-2">
+                    <mat-form-field class="example-full-width" appearance="outline">
+                      <mat-label>Trainings</mat-label>
+                      <mat-select formControlName="trainingIds" multiple required>
+                        <mat-option *ngFor="let training of trainings" [value]="training.trainingId">
+                          {{ training.trainingName }} <!-- Assurez-vous que 'topic' est bien l'attribut à afficher -->
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+
+              <!-- Policies -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width" appearance="outline">
+                    <mat-label>Policies</mat-label>
+                    <mat-select formControlName="policyIds" multiple required>
+                      <mat-option *ngFor="let policy of policies" [value]="policy.policyId">
+                        {{ policy.policyName }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <button type="submit" mat-flat-button color="accent" [disabled]="!departmentForm.valid">Update Department</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

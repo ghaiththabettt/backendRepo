@@ -1,0 +1,78 @@
+<div class="addContainer">
+  <div class="modalHeader">
+    <div class="modalTitle">{{ dialogTitle }}</div>
+    <button mat-icon-button mat-dialog-close aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content>
+    <form [formGroup]="employeesForm" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phoneNumber" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Birth Date</mat-label>
+        <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" />
+        <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+        <mat-datepicker #dobPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Hire Date</mat-label>
+        <input matInput [matDatepicker]="hirePicker" formControlName="hireDate" />
+        <mat-datepicker-toggle matSuffix [for]="hirePicker"></mat-datepicker-toggle>
+        <mat-datepicker #hirePicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Position</mat-label>
+        <input matInput formControlName="position" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Salary</mat-label>
+        <input matInput type="number" formControlName="salary" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Department</mat-label>
+        <input matInput formControlName="departmentId" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Contract</mat-label>
+        <input matInput formControlName="contractId" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 mb-2">
+        <mat-label>Address</mat-label>
+        <textarea matInput formControlName="address" rows="2"></textarea>
+      </mat-form-field>
+
+      <div class="text-right mt-3">
+        <button mat-flat-button color="primary" type="submit" [disabled]="!employeesForm.valid">
+          Save
+        </button>
+        <button mat-flat-button mat-dialog-close>Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

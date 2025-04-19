@@ -1,0 +1,93 @@
+<div>
+  <!-- Left Sidebar -->
+  <aside id="leftsidebar" class="sidebar" (mouseenter)="mouseHover()" (mouseleave)="mouseOut()">
+    <div class="menu">
+      <ng-scrollbar [style.height]="listMaxHeight + 'px'" visibility="hover">
+        <ul class="list">
+          <!-- Bloc utilisateur -->
+          <li class="sidebar-user-panel">
+            <div class="user-panel">
+              <div class="image">
+                <img [src]="userImg" class="img-circle user-img-circle" alt="User Image" />
+              </div>
+            </div>
+            <div class="profile-usertitle">
+              <div class="sidebar-userpic-name">{{ userFullName }}</div>
+              <div class="profile-usertitle-job">{{ userType }}</div>
+            </div>
+          </li>
+
+          <!-- Menu principal -->
+          <li *ngFor="let item of sidebarItems" [routerLinkActive]="item.submenu.length > 0 ? 'active' : 'active-top'">
+            <!-- Groupe de titres -->
+            <div class="header" *ngIf="item.groupTitle">
+              {{ item.title | translate }}
+            </div>
+
+            <!-- Élément de menu -->
+            <ng-container *ngIf="!item.groupTitle">
+              <a
+                [routerLink]="item.submenu.length === 0 ? [item.path] : null"
+                [ngClass]="[item.class]"
+                (click)="callToggleMenu($event, item.submenu.length)"
+                class="menu-top"
+              >
+                <span class="hide-menu">{{ item.title | translate }}</span>
+                <span *ngIf="item.badge" [ngClass]="[item.badgeClass]">{{ item.badge }}</span>
+              </a>
+
+              <!-- Sous-menu niveau 1 -->
+              <ul class="ml-menu" *ngIf="item.submenu.length > 0">
+                <li *ngFor="let sub1 of item.submenu" [routerLinkActive]="sub1.submenu.length > 0 ? '' : 'active'">
+                  <a
+                    [routerLink]="sub1.submenu.length > 0 ? null : [sub1.path]"
+                    (click)="callToggleMenu($event, sub1.submenu.length)"
+                    [ngClass]="[sub1.class]"
+                  >
+                    {{ sub1.title | translate }}
+                  </a>
+
+                  <!-- Sous-menu niveau 2 -->
+                  <ul class="ml-menu-2" *ngIf="sub1.submenu.length > 0">
+                    <li *ngFor="let sub2 of sub1.submenu" [routerLinkActive]="sub2.submenu.length > 0 ? '' : 'active'">
+                      <a
+                        [routerLink]="sub2.submenu.length > 0 ? null : [sub2.path]"
+                        (click)="callToggleMenu($event, sub2.submenu.length)"
+                        [ngClass]="[sub2.class]"
+                      >
+                        {{ sub2.title | translate }}
+                      </a>
+
+                      <!-- Sous-menu niveau 3 -->
+                      <ul class="ml-menu-3" *ngIf="sub2.submenu.length > 0">
+                        <li
+                          *ngFor="let sub3 of sub2.submenu"
+                          [routerLinkActive]="sub3.submenu.length > 0 ? '' : 'active'"
+                        >
+                          <a
+                            [routerLink]="sub3.submenu.length > 0 ? null : [sub3.path]"
+                            (click)="callToggleMenu($event, sub3.submenu.length)"
+                            [ngClass]="[sub3.class]"
+                          >
+                            {{ sub3.title | translate }}
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </ng-container>
+          </li>
+
+          <!-- Logout -->
+          <li>
+            <a (click)="logout()" class="menu-top">
+              <span class="hide-menu">{{ 'HEADER.LOGOUT' | translate }}</span>
+            </a>
+          </li>
+        </ul>
+      </ng-scrollbar>
+    </div>
+  </aside>
+</div>

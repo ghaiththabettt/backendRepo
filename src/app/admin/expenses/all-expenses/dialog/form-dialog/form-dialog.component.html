@@ -1,0 +1,76 @@
+<div class="container">
+  <h2 mat-dialog-title>{{dialogTitle}}</h2>
+  <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+    <div mat-dialog-content>
+      <!-- Employee Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Select Employee</mat-label>
+        <mat-select formControlName="employee" required [compareWith]="compareEmployees">
+          <mat-option *ngFor="let employee of employees" [value]="employee">
+            {{ employee.name }} {{ employee.lastName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="expenseForm.get('employee')?.hasError('required')">
+          Please select an employee
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Type Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type" required>
+          <mat-option *ngFor="let type of expenseTypes" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="expenseForm.get('type')?.hasError('required')">
+          Type is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Amount Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Amount</mat-label>
+        <input matInput type="number" formControlName="amount" min="0" step="0.01" required>
+        <span matPrefix>$&nbsp;</span>
+        <mat-error *ngIf="expenseForm.get('amount')?.hasError('required')">
+          Amount is required
+        </mat-error>
+        <mat-error *ngIf="expenseForm.get('amount')?.hasError('min')">
+          Amount must be greater than 0
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Date Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="expenseForm.get('date')?.hasError('required')">
+          Date is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Status Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option *ngFor="let status of expenseStatuses" [value]="status">
+            {{ status }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="expenseForm.get('status')?.hasError('required')">
+          Status is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions align="end">
+      <button mat-button type="button" (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!expenseForm.valid || isLoading">
+        {{ data.action === 'add' ? 'Add' : 'Update' }}
+      </button>
+    </div>
+  </form>
+</div>

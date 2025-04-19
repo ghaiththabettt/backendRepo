@@ -1,0 +1,240 @@
+<!-- Fichier: header.component.html -->
+<nav #navbar class="navbar active">
+  <div class="container-fluid">
+
+    <!-- Logo/Brand et boutons de Toggles Mobile -->
+    <div class="navbar-header">
+      <a href="#" onClick="return false;" class="navbar-toggle collapsed"
+         (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
+      <a href="#" onClick="return false;" class="bars" (click)="toggleSidebar()"></a>
+      <a class="navbar-brand" [routerLink]="homePage">
+        <img src="assets/images/logo.png" alt="Company Logo" />
+        <span class="logo-name">Kuber</span> <!-- Ou votre nom d'app -->
+      </a>
+    </div>
+
+    <!-- Section Collapsible -->
+    <div class="collapse navbar-collapse" [ngClass]="isNavbarCollapsed ? '' : 'show'">
+
+      <!-- Icône Menu Latéral -->
+      <ul class="float-start collapse-menu-icon">
+        <li class="collapseBtn">
+          <button mat-icon-button (click)="toggleSidebar()" class="sidemenu-collapse nav-notification-icons" matTooltip="Toggle Sidebar">
+            <app-feather-icons [icon]="'menu'" [class]="'header-icon'"></app-feather-icons>
+          </button>
+        </li>
+      </ul>
+
+      <!-- ===== Éléments de DROITE ===== -->
+      <ul class="nav navbar-nav navbar-right">
+
+        <!-- Bouton Plein Écran -->
+        <li class="fullscreen">
+          <button mat-icon-button class="nav-notification-icons" (click)="callFullscreen()" matTooltip="Full Screen">
+            <app-feather-icons [icon]="'maximize'" [class]="'header-icon'"></app-feather-icons>
+          </button>
+        </li>
+
+        <!-- ==================== SECTION POINTAGE / TIMER ==================== -->
+        <li class="nav-item d-flex align-items-center me-3 ms-2">
+
+            <!-- Indicateur de chargement (visible seulement si isFetchingLocation) -->
+            @if (isFetchingLocation) {
+              <div class="spinner-border spinner-border-sm text-secondary me-2" role="status" aria-hidden="true" matTooltip="Recherche de localisation..."></div>
+              <!-- Affichage optionnel texte pendant chargement -->
+              <!-- <span class="text-muted small">Loc...</span> -->
+            }
+
+            <!-- Bouton DÉMARRER -->
+            <!-- Visible si PAS en tracking. Désactivé si fetchingLocation. -->
+            @if (!(timerService.isTracking$ | async)) {
+              <button mat-fab color="primary" class="ms-2 start-button shadow-lg" aria-label="Démarrer le pointage"
+                      [matTooltip]="isFetchingLocation ? 'Recherche de localisation...' : 'Démarrer le pointage'"
+                      [disabled]="isFetchingLocation"
+                      (click)="startPointage()">
+                  <mat-icon>play_arrow</mat-icon>
+              </button>
+            }
+
+            <!-- Affichage TIMER + BOUTONS (visible SI en tracking) -->
+            @if (timerService.isTracking$ | async) {
+              <div class="d-flex align-items-center timer-controls">
+                <!-- Toujours afficher le timer -->
+                <span class="timer me-2 font-monospace">{{ timerDisplay }}</span>
+
+                <!-- Container pour les boutons d'action (Pause/Resume/Stop) -->
+                <div class="d-flex align-items-center">
+
+                    <!-- Bouton PAUSE (visible si PAS en pause) -->
+                    @if (!(timerService.isPaused$ | async)) {
+                      <button mat-mini-fab color="accent" class="ms-1 pause-button shadow-md"
+                              aria-label="Mettre en pause"
+                              [matTooltip]="isFetchingLocation ? 'Action indisponible pendant la localisation' : 'Mettre en pause'"
+                              [disabled]="isFetchingLocation || !currentPointageId"
+                              (click)="pausePointage()">
+                           <mat-icon>pause</mat-icon>
+                       </button>
+                    }
+
+                    <!-- Bouton RESUME (visible si EN pause) -->
+                    @if (timerService.isPaused$ | async) {
+                       <button mat-mini-fab color="primary" class="ms-1 resume-button shadow-md"
+                                aria-label="Reprendre le pointage"
+                                [matTooltip]="isFetchingLocation ? 'Action indisponible pendant la localisation' : 'Reprendre le pointage'"
+                                [disabled]="isFetchingLocation || !currentPointageId"
+                                (click)="resumePointage()">
+                             <mat-icon>play_arrow</mat-icon>
+                        </button>
+                    }
+
+                     <!-- Bouton STOP (toujours visible si tracking actif) -->
+                     <button mat-mini-fab color="warn" class="ms-1 stop-button shadow-md"
+                             aria-label="Arrêter le pointage"
+                             [matTooltip]="isFetchingLocation ? 'Recherche de localisation...' : 'Arrêter le pointage'"
+                             [disabled]="isFetchingLocation || !currentPointageId"
+                             (click)="stopPointage()">
+                          <mat-icon>stop</mat-icon>
+                      </button>
+                 </div> <!-- Fin .d-flex pour boutons d'action -->
+              </div> <!-- Fin .timer-controls -->
+            } <!-- Fin @if (timerService.isTracking$ | async) -->
+
+         </li>
+        <!-- ================== FIN SECTION POINTAGE / TIMER =================== -->
+
+
+        <!-- Menu Langue -->
+        <li class="languageMenu">
+         <button mat-icon-button [matMenuTriggerFor]="languagemenu" class="lang-dropdown nav-notification-icons">
+           <img [src]="flagvalue || defaultFlag" height="16" alt="Selected Language Flag">
+          </button>
+          <mat-menu #languagemenu="matMenu" class="lang-item-menu">
+             @for (item of listLang; track item.lang) {
+               <div class="lang-item">
+                 <button mat-menu-item class="dropdown-item lang-item-list"
+                   (click)="setLanguage(item.text, item.lang, item.flag)"
+                   [class.active]="langStoreValue === item.lang">
+                   <img [src]="item.flag" class="flag-img" height="12" alt="{{item.text}} Flag">
+                   <span class="align-middle">{{item.text}}</span>
+                 </button>
+               </div>
+             }
+          </mat-menu>
+        </li>
+
+        <!-- Menu Notifications -->
+        <li class="nav-item btnNotification">
+          <button mat-icon-button [matMenuTriggerFor]="notificationMenu" class="nav-notification-icons">
+            <app-feather-icons [icon]="'bell'" [class]="'header-icon'"></app-feather-icons>
+            @if (notifications && notifications.length > 0) {
+              <span class="label-count bg-orange">{{ notifications.length }}</span>
+            }
+          </button>
+          <mat-menu #notificationMenu="matMenu" class="nfc-menu">
+             <div class="nfc-header"><h5 class="mb-0">Notifications</h5><a href="#" onClick="return false;" class="nfc-mark-as-read">Mark all as read</a></div>
+             <div class="nfc-dropdown"><ng-scrollbar style="height: 350px" visibility="hover"><div class="noti-list header-menu"><div class="menu">@for (notification of notifications; track $index) { <button mat-menu-item [ngClass]="[notification.status]"><span class="table-img msg-user"><i class="material-icons-outlined nfc-type-icon" [ngClass]="[notification.color]">{{ notification.icon }}</i></span><span class="menu-info"><span class="menu-title">{{ notification.message }}</span><span class="menu-desc mt-2"><i class="material-icons">access_time</i> {{ notification.time }}</span></span><span class="nfc-close"><app-feather-icons [icon]="'x'" [class]="'user-menu-icons'"></app-feather-icons></span></button>} @empty { <div class="menu-info text-center p-3 text-muted">No notifications</div>}</div></div></ng-scrollbar></div>
+             <div class="nfc-footer"><a href="#" onClick="return false;" class="nfc-read-all">Read All Notifications</a></div>
+          </mat-menu>
+        </li>
+
+        <!-- Menu Profil Utilisateur -->
+        <li class="nav-item user_profile">
+          @if (currentUser) {
+            <button mat-button [matMenuTriggerFor]="profilemenu">
+              <div class="chip dropdown-toggle">
+                <span>{{ currentUser?.name }} {{ currentUser?.lastName }}</span> <!-- Assurez-vous que currentUser a bien name/lastName ou firstName/lastName -->
+                <img [src]="userImg" class="user_img" width="32" height="32" alt="User">
+              </div>
+            </button>
+            <mat-menu #profilemenu="matMenu" class="profile-menu">
+               <div class="noti-list"><div class="menu"><div class="user_dw_menu"><button mat-menu-item (click)="logout()" class="user-item-list"><app-feather-icons [icon]="'log-out'" [class]="'user-menu-icons'"></app-feather-icons>Logout</button></div></div></div>
+            </mat-menu>
+          }
+        </li>
+
+      </ul> <!-- FIN ul.nav.navbar-nav.navbar-right -->
+    </div> <!-- FIN div.collapse.navbar-collapse -->
+
+  </div> <!-- FIN div.container-fluid -->
+
+
+  <!-- ================ FORMULAIRE DE PAUSE (Modal Overlay) ================ -->
+  @if (isPauseFormVisible) {
+    <div class="pause-form-overlay" (click)="cancelPauseForm()"> <!-- Clic sur l'overlay annule aussi -->
+      <div class="pause-form-container" (click)="$event.stopPropagation()"> <!-- Empêche clic intérieur de fermer -->
+        <h5>Choisir le type de pause</h5>
+
+        <div class="form-group">
+          <label for="pauseType">Type:</label>
+          <select id="pauseType" name="pauseType" [(ngModel)]="selectedPauseType" required class="form-select">
+             <option [ngValue]="null" disabled>-- Sélectionner --</option>
+             @for(type of getValidPauseTypes(); track type) {
+               <option [value]="type">{{ pauseTypeLabels[type] || type }}</option>
+             }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="pauseNote">Note (optionnel):</label>
+          <textarea id="pauseNote" name="pauseNote" [(ngModel)]="pauseNote" rows="2" class="form-control"></textarea>
+        </div>
+
+        <div class="pause-form-actions">
+          <button type="button" class="btn btn-secondary me-2" (click)="cancelPauseForm()">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="confirmPause()" [disabled]="!selectedPauseType">Valider Pause</button>
+        </div>
+
+      </div>
+    </div>
+  }
+  <!-- =================== FIN FORMULAIRE DE PAUSE ================== -->
+
+  <!-- ============= NOUVEAU : FORMULAIRE DE DÉMARRAGE =============== -->
+  @if (isStartFormVisible) {
+    <div class="start-form-overlay" (click)="cancelStartForm()"> <!-- Appelle cancelStartForm -->
+      <div class="start-form-container" (click)="$event.stopPropagation()">
+        <h5>Démarrer Pointage</h5>
+
+        <!-- Sélection Type Entrée -->
+        <div class="form-group">
+          <label for="startType">Type d'entrée:</label>
+          <select id="startType" name="startType" [(ngModel)]="selectedStartType" required class="form-select">
+            <!-- Boucle sur les types d'entrée -->
+            @for (type of EntreeTypes; track type) {
+              <option [value]="type">{{ entreeTypeLabels[type] || type }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Champ Note -->
+        <div class="form-group">
+          <label for="startNote">Note (optionnel):</label>
+          <textarea id="startNote" name="startNote" [(ngModel)]="startNote" rows="2" class="form-control"></textarea>
+        </div>
+
+        <!-- Potentiellement inputs pour heureDebut/Fin Proposée si mode Flexible et interface désirée -->
+        <!--
+        <div *ngIf="currentRestrictionMode === RestrictionsHorloge.Flexible"> ... </div>
+        -->
+
+        <!-- Indicateur chargement localisation (Optionnel mais recommandé) -->
+        @if (isFetchingLocation) {
+          <div class="text-center my-2">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            <span class="ms-2 text-muted"> Recherche localisation...</span>
+          </div>
+        }
+
+        <!-- Boutons d'action -->
+        <div class="start-form-actions">
+          <button type="button" class="btn btn-secondary me-2" (click)="cancelStartForm()" [disabled]="isFetchingLocation">Annuler</button>
+          <button type="button" class="btn btn-success" (click)="confirmStart()" [disabled]="isFetchingLocation"> <!-- 'success' pour Démarrer -->
+            Confirmer & Démarrer
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+  <!-- ============ FIN FORMULAIRE DE DÉMARRAGE =============== -->
+
+</nav>

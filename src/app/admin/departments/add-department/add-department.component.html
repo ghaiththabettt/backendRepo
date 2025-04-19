@@ -1,0 +1,75 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <!-- Affichage du breadcrumb -->
+      <app-breadcrumb 
+        [title]="breadscrums[0].title" 
+        [items]="breadscrums[0].items" 
+        [active_item]="breadscrums[0].active">
+      </app-breadcrumb>
+    </div>
+    <div class="row clearfix">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <div class="card">
+          <div class="header">
+            <h2>Add Department</h2>
+          </div>
+          <div class="body">
+            <form class="m-4" [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+              <!-- Department Name -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width mb-3" appearance="outline">
+                    <mat-label>Department Name</mat-label>
+                    <input matInput formControlName="departmentName" required>
+                    <mat-error *ngIf="departmentForm.get('departmentName')?.hasError('required')">
+                      Department Name is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Phone -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width mb-3" appearance="outline">
+                    <mat-label>Phone</mat-label>
+                    <input matInput formControlName="phone" required>
+                    <mat-error *ngIf="departmentForm.get('phone')?.hasError('required')">
+                      Phone is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Email -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <mat-form-field class="example-full-width mb-3" appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="emailDept" required>
+                    <mat-error *ngIf="departmentForm.get('emailDept')?.hasError('required')">
+                      Email is required
+                    </mat-error>
+                    <mat-error *ngIf="departmentForm.get('emailDept')?.hasError('email')">
+                      Enter a valid email address
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Boutons Submit / Cancel -->
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <button mat-flat-button color="accent" type="submit" [disabled]="!departmentForm.valid">
+                    Submit
+                  </button>
+                  <button type="button" mat-flat-button class="formCancelBtn">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

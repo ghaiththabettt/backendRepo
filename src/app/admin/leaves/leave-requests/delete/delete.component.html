@@ -1,0 +1,28 @@
+<div class="container">
+  <h3 mat-dialog-title>Are you sure?</h3>
+  <div mat-dialog-content>
+    <p>You are about to delete the leave request for:</p>
+    <ul class="clearfix">
+      <li>
+        <p><span class="font-weight-bold"> Name: </span>{{data.name}}</p>
+      </li>
+      <li>
+        <p><span class="font-weight-bold"> Leave Type: </span>{{ data.type }}</p>
+      </li>
+      <li>
+        <p>
+          <span class="font-weight-bold">From: </span>{{data.from | date: 'MM/dd/yyyy'}} <!-- Use date pipe -->
+        </p>
+      </li>
+    </ul>
+    <p>This action cannot be undone.</p>
+  </div>
+  <div mat-dialog-actions class="mb-1">
+    <!-- Call confirmDelete() when Delete is clicked -->
+    <button mat-flat-button class="formCancelBtn" color="warn" (click)="confirmDelete()">
+      Delete
+    </button>
+    <!-- Call onNoClick() or simply use mat-dialog-close for Cancel -->
+    <button mat-flat-button color="accent" (click)="onNoClick()" tabindex="-1">Cancel</button>
+  </div>
+</div>

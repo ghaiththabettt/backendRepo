@@ -1,0 +1,62 @@
+{
+  "HEADER": {
+    "SEARCH": "Rechercher...",
+    "NOTIFICATIONS": "Notifications",
+    "SETTINGS": "Paramètres",
+    "PROFILE": "Profil",
+    "LOGOUT": "Déconnexion"
+  },
+  "MENUITEMS": {
+    "MAIN": {
+      "TEXT": "Principal"
+    },
+    "DASHBOARD": {
+      "TEXT": "Tableau de bord",
+      "LIST": {
+        "DASHBOARD1": "Tableau de bord 1",
+        "DASHBOARD2": "Tableau de bord 2"
+      }
+    },
+    "EMPLOYEES": {
+      "TEXT": "Employés",
+      "LIST": {
+        "ALL": "Tous les employés",
+        "ADD": "Ajouter un employé",
+        "EDIT": "Modifier un employé",
+        "PROFILE": "Profil employé"
+      }
+    },
+    "CLIENTS": {
+      "TEXT": "Clients",
+      "LIST": {
+        "ALL": "Tous les clients",
+        "ADD": "Ajouter un client",
+        "EDIT": "Modifier un client"
+      }
+    },
+    "PROJECTS": {
+      "TEXT": "Projets",
+      "LIST": {
+        "ALL": "Tous les projets",
+        "ADD": "Ajouter un projet",
+        "EDIT": "Modifier un projet"
+      }
+    },
+    "ATTENDANCE": {
+      "TEXT": "Présence",
+      "LIST": {
+        "TODAY": "Présence aujourd'hui",
+        "EMPLOYEE": "Présence employé",
+        "SHEET": "Feuille de présence"
+      }
+    },
+    "PAYROLL": {
+      "TEXT": "Paie",
+      "LIST": {
+        "EMPLOYEE_SALARY": "Salaire employé",
+        "PAYSLIP": "Fiche de paie",
+        "PAYROLL_ITEMS": "Éléments de paie"
+      }
+    }
+  }
+}

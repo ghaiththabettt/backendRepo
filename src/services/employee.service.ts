@@ -59,5 +59,6 @@ export class EmployeeService {
 }
 function throwError(arg0: () => string): Observable<Employee> {
   throw new Error('Function not implemented.');
+  
 }
 

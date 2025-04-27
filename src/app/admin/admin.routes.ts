@@ -17,6 +17,11 @@ export const ADMIN_ROUTE: Route[] = [
       .then(m => m.ADMIN_EMPLOYEE_ROUTE)
   },
   {
+    path: 'contrats',
+    loadChildren: () => import('./contrats/contrats.routes')
+      .then(m => m.CONTRATS_ROUTES)
+  },
+  {
     path: 'clients',
     loadChildren: () => import('./clients/clients.routes')
       .then(m => m.ADMIN_CLIENT_ROUTE)

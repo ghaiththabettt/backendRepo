@@ -1,22 +1,40 @@
-<h3 mat-dialog-title>Are you sure?</h3>
+<h3 mat-dialog-title>Cancel Leave Request?</h3> <!-- Changed Title -->
 <div mat-dialog-content>
+  <p>Are you sure you want to cancel this PENDING leave request?</p> <!-- Added confirmation text -->
   <ul class="clearfix">
     <li>
-      <p><span class="font-weight-bold"> Type: </span>{{data.type}}</p>
+      <p><span class="font-weight-bold">Type: </span>{{ data.type | titlecase }}</p> <!-- Use titlecase pipe -->
+    </li>
+    <!-- Optional: Add dates for clarity -->
+    <li>
+      <p><span class="font-weight-bold">From: </span>{{ data.fromDate | date:'dd/MM/yyyy' }}</p>
     </li>
     <li>
-      <p><span class="font-weight-bold"> Status: </span>{{ data.status }}</p>
+      <p><span class="font-weight-bold">To: </span>{{ data.toDate | date:'dd/MM/yyyy' }}</p>
     </li>
     <li>
-      <p>
-        <span class="font-weight-bold">Details: </span>{{data.reason}}
-      </p>
+      <p><span class="font-weight-bold">Reason: </span>{{ data.reason }}</p>
     </li>
+    <!-- Status might not be needed here as we only allow deleting PENDING -->
+    <!--
+    <li>
+      <p><span class="font-weight-bold">Status: </span>{{ data.status | titlecase }}</p>
+    </li>
+     -->
   </ul>
 </div>
-<div mat-dialog-actions class="mb-1">
-  <button mat-flat-button class="formCancelBtn" [mat-dialog-close]="1" (click)="confirmDelete()">
-    Delete
+<div mat-dialog-actions class="mb-1 d-flex justify-content-end"> <!-- Align buttons -->
+  <!-- Cancel Button -->
+  <button mat-stroked-button color="primary" (click)="onNoClick()" tabindex="-1">
+     No, Keep Request
   </button>
-  <button mat-flat-button mat-dialog-close color="accent" tabindex="-1">Cancel</button>
+  <!-- Delete Button: Removed [mat-dialog-close], calls confirmDelete, uses color="warn" -->
+  <button mat-flat-button color="warn" class="ms-2" (click)="confirmDelete()" [disabled]="isDeleting">
+    @if(isDeleting) {
+      <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
+      Deleting...
+    } @else {
+      Yes, Cancel Request
+    }
+  </button>
 </div>

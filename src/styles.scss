@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Styles pour les boîtes de dialogue des contrats */
+.contrat-dialog-container {
+  /* Assure que le container est au bon format */
+  display: flex;
+  flex-direction: column;
+  
+  /* Style de la boîte de dialogue */
+  .mat-mdc-dialog-container {
+    overflow: hidden !important; /* Empêche le débordement au niveau du container */
+    padding: 0 !important; /* Supprime le padding par défaut */
+  }
+  
+  /* Assure que la partie content peut défiler */
+  .mat-mdc-dialog-content {
+    max-height: none !important; /* Permet de gérer la hauteur nous-mêmes */
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important; /* Supprime le padding par défaut */
+    overflow: auto !important; /* Active le défilement quand nécessaire */
+  }
+}

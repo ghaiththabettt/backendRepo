@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient ,HttpHeaders } from '@angular/common/http';
 import { Employee } from '../models/employee.model';
+import { EmployeeLite } from '../app/admin/contrats/contrat.model';
 import { Observable } from 'rxjs';
 import { AuthService } from 'app/core/service/auth.service'; // Assurez-vous que AuthService est importé
 
@@ -10,6 +11,7 @@ import { AuthService } from 'app/core/service/auth.service'; // Assurez-vous que
 export class EmployeeService {
   // L'endpoint renvoie maintenant tous les champs nécessaires
   private apiUrl = 'http://localhost:8083/api/employee/all';
+  private apiUrl2 = `http://localhost:8083/api/employee`; // Example Employee base URL
 
   constructor(private http: HttpClient,private authService: AuthService) {}
 
@@ -44,6 +46,10 @@ export class EmployeeService {
     return this.http.put<Employee>(`http://localhost:8083/api/employee/${id}`, employee, { headers });
   }
   
+  getEmployeesSimpleList(): Observable<EmployeeLite[]> {
+    // Example endpoint URL - you need to implement this on the backend
+    return this.http.get<EmployeeLite[]>(`${this.apiUrl2}/list`);
+}
 
 
   deleteEmployee(id: number): Observable<void> {

@@ -1,30 +1,24 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { MyLeavesService } from './my-leaves.service';
+// src/app/employee/my-leaves/my-leaves.component.ts
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, Pipe, PipeTransform } from '@angular/core'; // Added Pipe, PipeTransform
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MyLeaves } from './my-leaves.model';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatMenuTrigger, MatMenuModule } from '@angular/material/menu';
+import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { CommonModule, formatDate, NgClass, DatePipe, TitleCasePipe } from '@angular/common'; // Import necessary common modules/pipes
+
+import { MyLeavesService } from './my-leaves.service';
+import { MyLeaves } from './my-leaves.model';
 import { MyLeavesFormComponent } from './dialogs/form-dialog/form-dialog.component';
 import { MyLeavesDeleteComponent } from './dialogs/delete/delete.component';
-import { SelectionModel } from '@angular/cdk/collections';
+
 import { rowsAnimation } from '@shared';
 import { Direction } from '@angular/cdk/bidi';
 import { TableExportUtil } from '@shared';
-import { formatDate, NgClass, DatePipe } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRippleModule } from '@angular/material/core';
 import { FeatherIconsComponent } from '@shared/components/feather-icons/feather-icons.component';
@@ -37,46 +31,72 @@ import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.co
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 
+// Custom pipe for formatting duration
+@Pipe({
+  name: 'formatDuration',
+  standalone: true // Make pipe standalone
+})
+export class FormatDurationPipe implements PipeTransform {
+  transform(value: string | null | undefined): string {
+    if (!value) return '';
+    switch (value.toUpperCase()) {
+      case 'FULL_DAY': return 'Full Day';
+      case 'HALF_DAY': return 'Half Day';
+      default:
+        // Basic fallback formatting
+        return value.replace(/_/g, ' ').replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase());
+    }
+  }
+}
+
+
 @Component({
     selector: 'app-my-leaves',
     templateUrl: './my-leaves.component.html',
     styleUrls: ['./my-leaves.component.scss'],
     animations: [rowsAnimation],
+    standalone: true,
     imports: [
-        BreadcrumbComponent,
-        FormsModule,
-        MatTooltipModule,
-        MatButtonModule,
-        MatIconModule,
-        MatTableModule,
-        MatSortModule,
-        NgClass,
-        MatCheckboxModule,
-        FeatherIconsComponent,
-        MatRippleModule,
-        MatSelectModule,
-        MatProgressSpinnerModule,
-        MatMenuModule,
-        MatPaginatorModule,
-        DatePipe,
+      CommonModule, // Provides common directives and pipes
+      BreadcrumbComponent,
+      FormsModule,
+      MatTooltipModule,
+      MatButtonModule,
+      MatIconModule,
+      MatTableModule,
+      MatSortModule,
+      MatCheckboxModule,
+      FeatherIconsComponent,
+      MatRippleModule,
+      MatSelectModule,
+      MatProgressSpinnerModule,
+      MatMenuModule,
+      MatPaginatorModule,
+      FormatDurationPipe // Import the custom pipe
+      // DatePipe and TitleCasePipe are available via CommonModule
+    ],
+    providers: [
+      // Pipes provided by CommonModule don't usually need explicit provision here
+      // If FormatDurationPipe wasn't standalone, provide it:
+      // FormatDurationPipe
+      // Provide DatePipe/TitleCasePipe if needed for injection (e.g., in exportExcel)
+       DatePipe,
+       TitleCasePipe,
+       FormatDurationPipe // Provide custom pipe for injection if needed elsewhere
     ]
 })
 export class MyLeavesComponent implements OnInit, OnDestroy {
+  // ** CORRECTED Column Definitions **
   columnDefinitions = [
-    { def: 'select', label: 'Checkbox', type: 'check', visible: true },
+    { def: 'select', label: 'Checkbox', type: 'check', visible: false },
     { def: 'id', label: 'ID', type: 'number', visible: false },
-    {
-      def: 'applyDate',
-      label: 'Application Date',
-      type: 'date',
-      visible: true,
-    },
+    { def: 'applyDate', label: 'Requested On', type: 'date', visible: true },
+    { def: 'type', label: 'Leave Type', type: 'text', visible: true },
     { def: 'fromDate', label: 'From Date', type: 'date', visible: true },
     { def: 'toDate', label: 'To Date', type: 'date', visible: true },
-    { def: 'halfDay', label: 'Half Day', type: 'text', visible: true },
-    { def: 'type', label: 'Leave Type', type: 'text', visible: true },
-    { def: 'status', label: 'Status', type: 'text', visible: true },
+    { def: 'durationType', label: 'Duration', type: 'text', visible: true }, // Changed from halfDay
     { def: 'reason', label: 'Reason', type: 'text', visible: true },
+    { def: 'status', label: 'Status', type: 'text', visible: true },
     { def: 'actions', label: 'Actions', type: 'actionBtn', visible: true },
   ];
 
@@ -88,14 +108,17 @@ export class MyLeavesComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('filter') filter!: ElementRef;
+  @ViewChild('filter', { static: true }) filter!: ElementRef;
   @ViewChild(MatMenuTrigger) contextMenu?: MatMenuTrigger;
 
   constructor(
-    public httpClient: HttpClient,
     public dialog: MatDialog,
     public myLeavesService: MyLeavesService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    // Inject pipes needed for methods like exportExcel
+    private datePipe: DatePipe,
+    private titleCasePipe: TitleCasePipe,
+    private formatDurationPipe: FormatDurationPipe
   ) {}
 
   ngOnInit() {
@@ -118,31 +141,60 @@ export class MyLeavesComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    this.myLeavesService.getAllMyLeaves().subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
-        this.isLoading = false;
-        this.refreshTable();
-        this.dataSource.filterPredicate = (data: MyLeaves, filter: string) =>
-          Object.values(data).some((value) =>
-            value.toString().toLowerCase().includes(filter)
+    this.isLoading = true;
+    this.selection.clear();
+    this.myLeavesService.getAllMyLeaves()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.dataSource.data = data;
+          this.isLoading = false;
+          this.refreshTable();
+          this.dataSource.filterPredicate = (leaveData: MyLeaves, filter: string) => {
+              // Include durationType in filter check
+              const dataStr = (
+                (leaveData.applyDate || '') +
+                (leaveData.type || '') +
+                (leaveData.fromDate || '') +
+                (leaveData.toDate || '') +
+                (leaveData.durationType || '') + // Add durationType
+                (leaveData.reason || '') +
+                (leaveData.status || '')
+              ).toLowerCase();
+              return dataStr.includes(filter);
+          };
+        },
+        error: (err) => {
+          console.error(err);
+          this.isLoading = false;
+          this.showNotification(
+            'snackbar-danger',
+            err.message || 'Failed to load your leave requests.',
+            'bottom',
+            'center'
           );
-      },
-      error: (err) => console.error(err),
-    });
+         }
+      });
   }
 
   private refreshTable() {
-    this.paginator.pageIndex = 0;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    // Use setTimeout to ensure CD cycle completes and paginator/sort are ready
+    setTimeout(() => {
+      if (this.paginator && this.sort) {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      } else {
+          console.warn("Paginator or Sort not ready during refreshTable");
+      }
+    }, 0);
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value
-      .trim()
-      .toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   addNew() {
@@ -150,68 +202,76 @@ export class MyLeavesComponent implements OnInit, OnDestroy {
   }
 
   editCall(row: MyLeaves) {
+    if (row.status !== 'PENDING') {
+      this.showNotification('snackbar-warning', 'Cannot edit requests that are not PENDING.', 'bottom', 'center');
+      return;
+    }
     this.openDialog('edit', row);
   }
 
   openDialog(action: 'add' | 'edit', data?: MyLeaves) {
-    let varDirection: Direction;
-    if (localStorage.getItem('isRtl') === 'true') {
+    let varDirection: Direction = 'ltr';
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('isRtl') === 'true') {
       varDirection = 'rtl';
-    } else {
-      varDirection = 'ltr';
     }
+
     const dialogRef = this.dialog.open(MyLeavesFormComponent, {
       width: '60vw',
       maxWidth: '100vw',
-      data: { myLeaves: data, action },
+      data: {
+        myLeaves: data,
+        action: action,
+      },
       direction: varDirection,
       autoFocus: false,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: MyLeaves | undefined) => {
       if (result) {
+        this.loadData(); // Reload data to show changes
         if (action === 'add') {
-          this.dataSource.data = [result, ...this.dataSource.data];
-        } else {
-          this.updateRecord(result);
+          this.showNotification('snackbar-success', 'Request Submitted Successfully!', 'bottom', 'center');
+        } else if (action === 'edit') {
+          this.showNotification('black', 'Request Updated Successfully!', 'bottom', 'center');
         }
-        this.refreshTable();
-        this.showNotification(
-          action === 'add' ? 'snackbar-success' : 'black',
-          `${action === 'add' ? 'Add' : 'Edit'} Record Successfully...!!!`,
-          'bottom',
-          'center'
-        );
       }
     });
   }
 
-  private updateRecord(updatedRecord: MyLeaves) {
-    const index = this.dataSource.data.findIndex(
-      (record) => record.id === updatedRecord.id
-    );
-    if (index !== -1) {
-      this.dataSource.data[index] = updatedRecord;
-      this.dataSource._updateChangeSubscription();
-    }
-  }
-
   deleteItem(row: MyLeaves) {
+    if (row.status !== 'PENDING') {
+      this.showNotification('snackbar-warning', 'Cannot cancel requests that are not PENDING.', 'bottom', 'center');
+      return;
+    }
+
     const dialogRef = this.dialog.open(MyLeavesDeleteComponent, {
-      data: row,
+      data: { // Pass necessary data for confirmation dialog
+        id: row.id,
+        type: row.type,
+        status: row.status,
+        reason: row.reason,
+        fromDate: row.fromDate,
+        toDate: row.toDate
+      }
     });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.dataSource.data = this.dataSource.data.filter(
-          (record) => record.id !== row.id
-        );
-        this.refreshTable();
-        this.showNotification(
-          'snackbar-danger',
-          'Delete Record Successfully...!!!',
-          'bottom',
-          'center'
-        );
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.isLoading = true;
+        this.myLeavesService.deleteMyLeaves(row.id, row.status)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.isLoading = false;
+              this.loadData(); // Reload data after delete
+              this.showNotification('snackbar-danger', 'Request Cancelled Successfully!', 'bottom', 'center'); // Changed message
+            },
+            error: (err) => {
+              console.error("Cancel failed:", err);
+              this.isLoading = false;
+              this.showNotification('snackbar-danger', err.message || 'Failed to cancel request.', 'bottom', 'center');
+            }
+          });
       }
     });
   }
@@ -223,7 +283,7 @@ export class MyLeavesComponent implements OnInit, OnDestroy {
     placementAlign: MatSnackBarHorizontalPosition
   ) {
     this.snackBar.open(text, '', {
-      duration: 2000,
+      duration: 3000,
       verticalPosition: placementFrom,
       horizontalPosition: placementAlign,
       panelClass: colorName,
@@ -232,21 +292,23 @@ export class MyLeavesComponent implements OnInit, OnDestroy {
 
   exportExcel() {
     const exportData = this.dataSource.filteredData.map((x) => ({
-      'Half Day': x.halfDay,
-      'Application Date':
-        formatDate(new Date(x.applyDate), 'yyyy-MM-dd', 'en') || '',
-      'From Date': formatDate(new Date(x.fromDate), 'yyyy-MM-dd', 'en') || '',
-      'To Date': formatDate(new Date(x.toDate), 'yyyy-MM-dd', 'en') || '',
-      Reason: x.reason,
-      'Leave Type': x.type,
-      Status: x.status,
-    }));
+        // Use nullish coalescing operator (??) to provide '' if transform result is null
+        'Requested On': this.datePipe.transform(x.applyDate, 'yyyy-MM-dd', 'en-US') ?? '',
+        'Leave Type': (x.type ? this.titleCasePipe.transform(x.type) : '') ?? '', // Ensure non-null/undefined
+        'From Date': this.datePipe.transform(x.fromDate, 'yyyy-MM-dd', 'en-US') ?? '',
+        'To Date': this.datePipe.transform(x.toDate, 'yyyy-MM-dd', 'en-US') ?? '',
+        'Duration': this.formatDurationPipe.transform(x.durationType) ?? '', // Ensure non-null/undefined
+        'Reason': x.reason ?? '', // Ensure non-null/undefined
+        'Status': (x.status ? this.titleCasePipe.transform(x.status) : '') ?? '', // Ensure non-null/undefined
+      }));
 
-    TableExportUtil.exportToExcel(exportData, 'leave_requests_export');
+    // Now exportData should conform to the expected type (no nulls)
+    TableExportUtil.exportToExcel(exportData, 'my_leave_requests_export');
   }
-
   isAllSelected() {
-    return this.selection.selected.length === this.dataSource.data.length;
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
   }
 
   masterToggle() {
@@ -255,19 +317,6 @@ export class MyLeavesComponent implements OnInit, OnDestroy {
       : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
-  removeSelectedRows() {
-    const totalSelect = this.selection.selected.length;
-    this.dataSource.data = this.dataSource.data.filter(
-      (item) => !this.selection.selected.includes(item)
-    );
-    this.selection.clear();
-    this.showNotification(
-      'snackbar-danger',
-      `${totalSelect} Record(s) Deleted Successfully...!!!`,
-      'bottom',
-      'center'
-    );
-  }
   onContextMenu(event: MouseEvent, item: MyLeaves) {
     event.preventDefault();
     this.contextMenuPosition = {

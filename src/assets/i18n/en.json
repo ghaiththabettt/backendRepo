@@ -10,6 +10,13 @@
         "DASHBOARD2": "Dashboard 2"
       }
     },
+    "CONTRATS": {
+      "TEXT": "Contracts",
+      "LIST": {
+        "ALL-CONTRATS": "All Contracts",
+        "ADD-CONTRAT": "Add Contract"
+      }
+    },
     "PROJECTS": {
       "TEXT": "Projects",
       "LIST": {

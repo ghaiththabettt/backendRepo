@@ -1,0 +1,129 @@
+<section class="content">
+  <div class="content-block">
+    <div class="block-header">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <ul class="breadcrumb breadcrumb-style">
+            <li class="breadcrumb-item">
+              <h4 class="page-title">Tous les contrats</h4>
+            </li>
+            <li class="breadcrumb-item bcrumb-1">
+              <a routerLink="/admin/dashboard/main">
+                <i class="fas fa-home"></i> Accueil</a>
+            </li>
+            <li class="breadcrumb-item bcrumb-2">
+              <a href="#" onClick="return false;">Contrats</a>
+            </li>
+            <li class="breadcrumb-item active">Tous les contrats</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="body">
+            <div class="table-responsive">
+              <div class="materialTableHeader">
+                <div class="row">
+                  <div class="col-8">
+                    <ul class="header-buttons-left ms-0">
+                      <li class="dropdown">
+                        <h2><strong>Contrats</strong></h2>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col-4">
+                    <ul class="header-buttons">
+                      <li>
+                        <div class="icon-button-demo">
+                          <button class="btn-space" mat-raised-button color="primary" (click)="addContratDialog()">
+                            <mat-icon class="col-white">add</mat-icon> Ajouter un contrat
+                          </button>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Référence</th>
+                    <th>Type</th>
+                    <th>Employé</th>
+                    <th>Date Début</th>
+                    <th>Date Fin</th>
+                    <th>Statut</th>
+                    <!-- CHANGED: Header for the file column -->
+                    <th>Document PDF</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="loading">
+                    <!-- CHANGED: colspan to match the new number of columns -->
+                    <td colspan="9" class="text-center">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                      </div>
+                    </td>
+                  </tr>
+                   <tr *ngIf="!loading && contrats.length === 0">
+                     <!-- CHANGED: colspan to match the new number of columns -->
+                    <td colspan="9" class="text-center">Aucun contrat trouvé</td>
+                  </tr>
+                  <tr *ngFor="let contrat of contrats; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ contrat.reference }}</td>
+                    <td>{{ contrat.contractType }}</td>
+                    <!-- Display employee name -->
+                    <td>{{ contrat.employee?.name }} {{ contrat.employee?.lastName }}</td>
+                    <td>{{ contrat.startDate | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ contrat.endDate | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                      <div [ngClass]="{'badge bg-success': contrat.statut === 'ACTIF',
+                                       'badge bg-danger': contrat.statut === 'NON_ACTIF'}">
+                        {{ contrat.statut }}
+                      </div>
+                    </td>
+                    <!-- CHANGED: Cell content for the file column -->
+                    <td>
+                      <ng-container *ngIf="contrat.fileName">
+                        <!-- Display the file name -->
+                        {{ contrat.fileName }}
+                        <!-- Add a download button/icon -->
+                        <button mat-icon-button color="primary" (click)="downloadPdf(contrat)" title="Télécharger le document PDF">
+                           <!-- You might need a download icon -->
+                           <mat-icon>download</mat-icon>
+                         </button>
+                      </ng-container>
+                      <ng-container *ngIf="!contrat.fileName">
+                        <!-- Display something if no file is attached -->
+                        Aucun fichier
+                      </ng-container>
+                    </td>
+
+                    <td>
+                      <button mat-icon-button color="primary" (click)="editContrat(contrat)" title="Modifier">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" (click)="deleteContrat(contrat)" title="Supprimer">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                      <!-- Optional: Add a view details button if you have a dedicated view component -->
+                      <!-- <button mat-icon-button color="accent" (click)="viewContratDetails(contrat)" title="Voir les détails">
+                        <mat-icon>visibility</mat-icon>
+                      </button> -->
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

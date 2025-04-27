@@ -1,0 +1,211 @@
+<section class="content">
+    <div class="content-block">
+      <div class="block-header">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <ul class="breadcrumb breadcrumb-style">
+              <li class="breadcrumb-item">
+                <!-- CHANGED Title -->
+                <h4 class="page-title">Modifier un contrat</h4>
+              </li>
+              <li class="breadcrumb-item bcrumb-1">
+                <a routerLink="/admin/dashboard/main">
+                  <i class="fas fa-home"></i> Accueil</a>
+              </li>
+              <li class="breadcrumb-item bcrumb-2">
+                <a routerLink="/admin/contrats/all-contrats">Contrats</a>
+              </li>
+               <!-- CHANGED Breadcrumb -->
+              <li class="breadcrumb-item active">Modifier un contrat</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row clearfix">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+          <div class="card main-card">
+             <!-- CHANGED Title -->
+            <div class="header bg-primary">
+              <h2 class="text-white"><i class="fas fa-edit me-2"></i><strong>Modification</strong> du contrat</h2>
+            </div>
+            <div class="body">
+              <!-- Form remains the same structure -->
+              <form [formGroup]="contratForm" (ngSubmit)="onSubmit()">
+                <div class="info-card mb-4 p-3">
+                  <h5 class="section-title"><i class="fas fa-info-circle me-2"></i>Informations de base</h5>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group position-relative">
+                        <label for="reference" class="form-label">Référence*</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                          <input type="text" id="reference" formControlName="reference" class="form-control" placeholder="Référence unique">
+                        </div>
+                        <div *ngIf="getFormControlErrors('reference')?.required" class="text-danger form-text">
+                          <i class="fas fa-exclamation-circle me-1"></i>La référence est obligatoire.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group position-relative">
+                        <label for="contractType" class="form-label">Type de contrat*</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-file-signature"></i></span>
+                          <select id="contractType" formControlName="contractType" class="form-control">
+                            <option value="">Sélectionner un type</option>
+                            <option *ngFor="let type of contractTypes" [value]="type">{{ type | titlecase }}</option>
+                          </select>
+                        </div>
+                        <div *ngIf="getFormControlErrors('contractType')?.required" class="text-danger form-text">
+                          <i class="fas fa-exclamation-circle me-1"></i>Le type de contrat est obligatoire.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="info-card mb-4 p-3">
+                  <h5 class="section-title"><i class="fas fa-calendar-alt me-2"></i>Période du contrat</h5>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group position-relative">
+                        <label for="startDate" class="form-label">Date de début*</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
+                          <input type="date" id="startDate" formControlName="startDate" class="form-control">
+                        </div>
+                        <div *ngIf="getFormControlErrors('startDate')?.required" class="text-danger form-text">
+                          <i class="fas fa-exclamation-circle me-1"></i>La date de début est obligatoire.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group position-relative">
+                        <label for="endDate" class="form-label">Date de fin</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
+                          <input type="date" id="endDate" formControlName="endDate" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group position-relative">
+                        <label for="renewalDate" class="form-label">Date de renouvellement</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-sync-alt"></i></span>
+                          <input type="date" id="renewalDate" formControlName="renewalDate" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="info-card mb-4 p-3">
+                  <h5 class="section-title"><i class="fas fa-user-tie me-2"></i>Association</h5>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group position-relative">
+                        <label for="employeeId" class="form-label">Employé*</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-user"></i></span>
+                          <select id="employeeId" formControlName="employeeId" class="form-control">
+                            <option [value]="null">Sélectionner un employé</option>
+                            <option *ngFor="let employee of employees$ | async" [value]="employee.id">
+                              {{ employee.fullName }}
+                            </option>
+                          </select>
+                        </div>
+                        <div *ngIf="getFormControlErrors('employeeId')?.required" class="text-danger form-text">
+                          <i class="fas fa-exclamation-circle me-1"></i>L'employé est obligatoire.
+                        </div>
+                         <div *ngIf="!(employees$ | async)?.length && !getFormControlErrors('employeeId')?.required" class="text-warning form-text">
+                          <i class="fas fa-exclamation-triangle me-1"></i>Aucun employé disponible.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+                 <!-- CHANGED File Input Section -->
+                <div class="info-card mb-4 p-3">
+                  <h5 class="section-title"><i class="fas fa-upload me-2"></i>Fichier PDF</h5>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group position-relative">
+                         <label for="fileInput" class="form-label">Sélectionner un **nouveau** fichier PDF (laisser vide pour garder l'ancien)</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-file-upload"></i></span>
+                          <input type="file" id="fileInput" class="form-control" (change)="onFileSelected($event)" accept=".pdf">
+                        </div>
+                        <!-- Display currently attached file name if no new file is selected -->
+                        <div *ngIf="currentFileName && !selectedFile" class="mt-2">
+                            <p class="text-muted mb-0"><i class="fas fa-file me-1"></i> Fichier actuel : {{ currentFileName }}</p>
+                            <!-- Optional: Add a button to remove the file if backend supports it -->
+                            <!-- <button type="button" class="btn btn-link btn-sm text-danger p-0" (click)="removeCurrentFile()">Retirer</button> -->
+                        </div>
+                         <!-- Display selected NEW file name -->
+                        <div *ngIf="selectedFile" class="mt-2">
+                            <p class="text-success mb-0"><i class="fas fa-check-circle me-1"></i> Nouveau fichier sélectionné : {{ selectedFile.name }}
+                               <button type="button" class="btn btn-link btn-sm text-danger p-0 ms-2" (click)="removeSelectedFile()">
+                                   <i class="fas fa-times-circle"></i> Annuler la sélection
+                              </button>
+                            </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                 <!-- End of CHANGED File Input Section -->
+  
+                <div class="info-card mb-4 p-3">
+                  <h5 class="section-title"><i class="fas fa-cog me-2"></i>Détails additionnels</h5>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group position-relative">
+                        <label for="statut" class="form-label">Statut*</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
+                          <select id="statut" formControlName="statut" class="form-control">
+                            <option value="">Sélectionner un statut</option>
+                            <option *ngFor="let statut of statutOptions" [value]="statut">{{ statut | titlecase }}</option>
+                          </select>
+                        </div>
+                        <div *ngIf="getFormControlErrors('statut')?.required" class="text-danger form-text">
+                          <i class="fas fa-exclamation-circle me-1"></i>Le statut est obligatoire.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                   <div class="row mt-3">
+                    <div class="col-md-12">
+                      <div class="form-group position-relative">
+                        <label for="description" class="form-label">Description</label>
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                          <textarea id="description" formControlName="description" class="form-control" rows="4" placeholder="Description détaillée du contrat"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+  
+                <div class="d-flex justify-content-end mt-4">
+                   <!-- CHANGED Cancel Button Link -->
+                  <button type="button" class="btn btn-light-secondary btn-lg me-3" routerLink="/admin/contrats/all-contrats">
+                    <i class="fas fa-times me-2"></i>Annuler
+                  </button>
+                   <!-- CHANGED Submit Button Text -->
+                  <button type="submit" class="btn btn-primary btn-lg" [disabled]="contratForm.invalid || loading">
+                    <i *ngIf="!loading" class="fas fa-save me-2"></i>
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    <!-- CHANGED Submit Button Text -->
+                    Mettre à jour
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

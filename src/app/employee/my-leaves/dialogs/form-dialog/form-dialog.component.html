@@ -1,141 +1,93 @@
+<!-- src/app/employee/my-leaves/dialogs/form-dialog/form-dialog.component.html -->
 <div class="addContainer">
   <div class="modalHeader">
-    <div class="avatarDetails">
-      <div class="modalTitle">
-        {{dialogTitle}}
-      </div>
-    </div>
-    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
-      <mat-icon>close</mat-icon>
-    </button>
+    <div class="avatarDetails"><div class="modalTitle">{{dialogTitle}}</div></div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button"><mat-icon>close</mat-icon></button>
   </div>
   <div mat-dialog-content>
     <form class="register-form m-4" [formGroup]="myLeavesForm" (ngSubmit)="submit()">
       <div class="row">
+        <!-- Application Date -->
         <div class=" col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
           <mat-form-field class="example-full-width" appearance="outline">
-            <mat-label>Apply date</mat-label>
+            <mat-label>Application Date</mat-label>
             <input matInput [matDatepicker]="picker1" formControlName="applyDate" required>
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
-            @if (myLeavesForm.get('applyDate')?.hasError('required')) {
-            <mat-error>
-              Please select date
-            </mat-error>
-            }
+            @if (myLeavesForm.get('applyDate')?.hasError('required') && myLeavesForm.get('applyDate')?.touched) { <mat-error>Please select an application date</mat-error> }
           </mat-form-field>
         </div>
+        <!-- From Date -->
         <div class=" col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
           <mat-form-field class="example-full-width" appearance="outline">
-            <mat-label>From date</mat-label>
+            <mat-label>Leave From Date</mat-label>
             <input matInput [matDatepicker]="picker2" formControlName="fromDate" required>
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
             <mat-datepicker #picker2></mat-datepicker>
-            @if (myLeavesForm.get('fromDate')?.hasError('required')) {
-            <mat-error>
-              Please select date
-            </mat-error>
-            }
+             @if (myLeavesForm.get('fromDate')?.hasError('required') && myLeavesForm.get('fromDate')?.touched) { <mat-error>Please select a start date</mat-error> }
           </mat-form-field>
         </div>
       </div>
       <div class="row">
+        <!-- To Date -->
         <div class=" col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
           <mat-form-field class="example-full-width" appearance="outline">
-            <mat-label>To date</mat-label>
+            <mat-label>Leave To Date</mat-label>
             <input matInput [matDatepicker]="picker3" formControlName="toDate" required>
             <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
             <mat-datepicker #picker3></mat-datepicker>
-            @if (myLeavesForm.get('toDate')?.hasError('required')) {
-            <mat-error>
-              Please select date
-            </mat-error>
-            }
+            @if (myLeavesForm.get('toDate')?.hasError('required') && myLeavesForm.get('toDate')?.touched) { <mat-error>Please select an end date</mat-error> }
           </mat-form-field>
         </div>
+        <!-- ** CORRECTED Duration Select ** -->
         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
           <mat-form-field class="example-full-width mb-3" appearance="outline">
-            <mat-label>Half Day</mat-label>
-            <mat-select formControlName="halfDay" required>
-              <mat-option [value]="'Yes'">
-                Yes
-              </mat-option>
-              <mat-option [value]="'No'">
-                No
-              </mat-option>
+            <mat-label>Duration</mat-label>
+            <mat-select formControlName="durationType" required> <!-- Changed formControlName -->
+              <mat-option value="FULL_DAY">Full Day</mat-option> <!-- Values match backend enum -->
+              <mat-option value="HALF_DAY">Half Day</mat-option> <!-- Values match backend enum -->
             </mat-select>
-            @if (myLeavesForm.get('halfDay')?.hasError('required')) {
-            <mat-error>
-              Action is required
-            </mat-error>
-            }
+             @if (myLeavesForm.get('durationType')?.hasError('required') && myLeavesForm.get('durationType')?.touched) { <mat-error>Please select the duration</mat-error> }
           </mat-form-field>
         </div>
       </div>
       <div class="row">
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-          <mat-form-field class="example-full-width mb-3" appearance="outline">
-            <mat-label>Type</mat-label>
+        <!-- Leave Type Select -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>Leave Type</mat-label>
             <mat-select formControlName="type" required>
-              <mat-option [value]="'Casual Leave'">
-                Casual Leave
-              </mat-option>
-              <mat-option [value]="'Sick Leave'">
-                Sick Leave
-              </mat-option>
-              <mat-option [value]="'Privilege Leave'">
-                Privilege Leave
-              </mat-option>
-              <mat-option [value]="'Marriage Leave'">
-                Marriage Leave
-              </mat-option>
-              <mat-option [value]="'Maternity Leave'">
-                Maternity Leave
-              </mat-option>
+              @if (isLoadingTypes) { <mat-option disabled><mat-spinner diameter="20" class="me-2"></mat-spinner> Loading Types...</mat-option> }
+              @else if (loadingError) { <mat-option disabled class="error-option">{{ loadingError }}</mat-option> }
+              @else {
+                @for (type of (leaveTypes$ | async); track type) { <mat-option [value]="type">{{ type | titlecase }}</mat-option> }
+                @if (!isLoadingTypes && !loadingError && !(leaveTypes$ | async)?.length) { <mat-option disabled>No leave types available</mat-option> }
+              }
             </mat-select>
-            @if (myLeavesForm.get('type')?.hasError('required')) {
-            <mat-error>
-              Select Any Type
-            </mat-error>
-            }
-          </mat-form-field>
-        </div>
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
-          <mat-form-field class="example-full-width mb-3" appearance="outline">
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="status" required>
-              <mat-option [value]="'Approved'">
-                Approved
-              </mat-option>
-              <mat-option [value]="'Rejected'">
-                Rejected
-              </mat-option>
-              <mat-option [value]="'Pending'">
-                Pending
-              </mat-option>
-            </mat-select>
-            @if (myLeavesForm.get('status')?.hasError('required')) {
-            <mat-error>
-              Select Status
-            </mat-error>
-            }
+            @if (myLeavesForm.get('type')?.hasError('required') && myLeavesForm.get('type')?.touched) { <mat-error>Please select a leave type</mat-error> }
           </mat-form-field>
         </div>
       </div>
       <div class="row">
+        <!-- Reason Textarea -->
         <div class=" col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
           <mat-form-field class="example-full-width mb-3" appearance="outline">
-            <mat-label>Reason</mat-label>
-            <textarea matInput formControlName="reason"></textarea>
+            <mat-label>Reason for Leave</mat-label>
+            <textarea matInput formControlName="reason" required rows="4" placeholder="Please provide a reason for your leave request"></textarea>
+            @if (myLeavesForm.get('reason')?.hasError('required') && myLeavesForm.get('reason')?.touched) { <mat-error>Please provide a reason for your request</mat-error> }
+            @if (myLeavesForm.get('reason')?.hasError('maxlength')) { <mat-error>Reason cannot exceed 500 characters</mat-error> }
           </mat-form-field>
         </div>
       </div>
       <div class="row">
+        <!-- Buttons -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
           <div class="example-button-row">
-            <button mat-flat-button class="formSubmitBtn" [disabled]="!myLeavesForm.valid" [mat-dialog-close]="1"
-              type="submit">Save</button>
-            <button mat-flat-button mat-dialog-close class="formCancelBtn" tabindex="-1">Cancel</button>
+            <button mat-flat-button color="primary" class="formSubmitBtn" [disabled]="!myLeavesForm.valid || isSubmitting" type="submit">
+              @if (isSubmitting) { <mat-spinner diameter="20" color="accent" class="me-2"></mat-spinner> Processing... }
+              @else { {{ action === 'edit' ? 'Update Request' : 'Submit Request' }} }
+            </button>
+            <button mat-stroked-button color="warn" class="formCloseBtn" type="button" (click)="onNoClick()" [disabled]="isSubmitting" tabindex="-1">Cancel</button>
           </div>
         </div>
       </div>

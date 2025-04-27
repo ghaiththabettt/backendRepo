@@ -1,0 +1,147 @@
+// Styles généraux
+.main-card {
+  border-radius: 8px;
+  box-shadow: 0 5px 25px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 30px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 20px;
+  }
+}
+
+// Carte d'information
+.info-card {
+  background-color: #f9fafc;
+  border-radius: 8px;
+  border-left: 4px solid #5783c7;
+  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #ffffff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  }
+}
+
+// Titre de section
+.section-title {
+  color: #5783c7;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(87, 131, 199, 0.2);
+}
+
+// Groupes de formulaires et contrôles
+.form-group {
+  margin-bottom: 20px;
+  
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #495057;
+  }
+  
+  .input-group {
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    
+    .input-group-text {
+      background-color: #5783c7;
+      color: white;
+      border: none;
+      width: 40px;
+      justify-content: center;
+    }
+    
+    .form-control {
+      border: 1px solid #ced4da;
+      padding: 10px 15px;
+      height: auto;
+      transition: all 0.2s ease;
+      
+      &:focus {
+        border-color: #5783c7;
+        box-shadow: 0 0 0 0.2rem rgba(87, 131, 199, 0.25);
+      }
+    }
+  }
+}
+
+// Messages de validation
+.text-danger.form-text, .text-warning.form-text {
+  font-size: 13px;
+  margin-top: 6px;
+  display: block;
+  font-weight: 400;
+}
+
+// Textarea spécifique
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+// Boutons
+.btn {
+  font-weight: 500;
+  text-transform: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+  &.btn-lg {
+    font-size: 16px;
+  }
+  
+  &.btn-primary {
+    background-color: #5783c7;
+    border-color: #5783c7;
+    box-shadow: 0 4px 10px rgba(87, 131, 199, 0.25);
+    
+    &:hover:not(:disabled) {
+      background-color: darken(#5783c7, 8%);
+      box-shadow: 0 8px 15px rgba(87, 131, 199, 0.3);
+    }
+    
+    &:disabled {
+      background-color: lighten(#5783c7, 15%);
+      border-color: lighten(#5783c7, 15%);
+      cursor: not-allowed;
+    }
+  }
+  
+  &.btn-light-secondary {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dde2e6;
+    
+    &:hover {
+      background-color: #e2e6ea;
+    }
+  }
+}
+
+// Styles responsifs
+@media (max-width: 768px) {
+  .info-card {
+    padding: 15px !important;
+  }
+  
+  .btn-lg {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}

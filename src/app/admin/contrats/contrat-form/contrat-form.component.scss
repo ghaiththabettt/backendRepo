@@ -1,0 +1,75 @@
+/* Styles pour le composant de formulaire de contrat */
+
+.dialog-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Utilise toute la hauteur disponible */
+  max-height: 100%;
+  overflow: hidden; /* Évite le double défilement */
+  
+  .header {
+    padding: 15px 20px;
+    flex-shrink: 0; /* Empêche l'en-tête de rétrécir */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    
+    h2 {
+      margin: 0;
+    }
+  }
+  
+  .body {
+    flex: 1;
+    overflow-y: auto; /* Active le défilement vertical */
+    padding: 20px; /* Espace autour du contenu */
+    
+    /* Limite la largeur du formulaire pour une meilleure lisibilité */
+    form {
+      max-width: 100%;
+    }
+    
+    .section-title {
+      margin-bottom: 15px;
+      color: #3f51b5; /* Couleur primaire pour les titres de section */
+      font-weight: 500;
+    }
+    
+    .info-card {
+      background-color: #fafafa;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.3s ease;
+      
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    /* Espace entre les groupes de formulaire */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    /* Style pour le texte d'aide et d'erreur */
+    .form-text {
+      margin-top: 5px;
+      font-size: 0.85rem;
+    }
+    
+    /* Styles pour les boutons d'action */
+    .btn {
+      min-width: 120px;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Styles pour les écrans mobiles */
+@media (max-width: 768px) {
+  .dialog-content-wrapper .body {
+    padding: 15px;
+    
+    .row > div {
+      margin-bottom: 10px;
+    }
+  }
+}

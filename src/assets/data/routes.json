@@ -186,6 +186,43 @@
     },
     {
       "path": "",
+      "title": "MENUITEMS.CONTRATS.TEXT",
+      "iconType": "feather",
+      "icon": "file-text",
+      "class": "menu-toggle",
+      "groupTitle": false,
+      "badge": "",
+      "badgeClass": "",
+      "role": ["Admin"],
+      "submenu": [
+        {
+          "path": "/admin/contrats/all-contrats",
+          "title": "MENUITEMS.CONTRATS.LIST.ALL-CONTRATS",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [""],
+          "submenu": []
+        },
+        {
+          "path": "/admin/contrats/add-contrat",
+          "title": "MENUITEMS.CONTRATS.LIST.ADD-CONTRAT",
+          "iconType": "",
+          "icon": "",
+          "class": "ml-menu",
+          "groupTitle": false,
+          "badge": "",
+          "badgeClass": "",
+          "role": [""],
+          "submenu": []
+        }
+      ]
+    },
+    {
+      "path": "",
       "title": "MENUITEMS.LEAVES.TEXT",
       "iconType": "feather",
       "icon": "trello",

@@ -1,0 +1,37 @@
+.contrat-badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  
+  &.active {
+    background-color: #00c853;
+    color: white;
+  }
+  
+  &.pending {
+    background-color: #ffc107;
+    color: black;
+  }
+  
+  &.expired {
+    background-color: #f44336;
+    color: white;
+  }
+}
+
+.action-button {
+  margin: 0 5px;
+}
+
+.materialTableHeader {
+  padding: 10px 20px;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 10px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}

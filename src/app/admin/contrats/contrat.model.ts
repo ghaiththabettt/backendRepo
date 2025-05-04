@@ -5,6 +5,8 @@ export interface EmployeeLite {
   lastName: string; // Matches backend User.lastName
   email?: string;
   fullName: string; // Assuming your backend EmployeeLite or User has a fullName derived property
+  departmentName?: string; // Optionnel <-- Assurez-vous qu'il est ici
+
 }
 
 // Define the Contract model to match the backend entity structure

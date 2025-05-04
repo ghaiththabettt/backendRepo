@@ -1,64 +1,16 @@
+<!-- employee-salary.component.html -->
 <section class="content" [class.sidebar-visible]="isSidebarVisible">
   <div class="content-block">
     <div class="block-header">
-      <app-breadcrumb
-        [title]="'Employee Salary'"
-        [items]="['Payroll']"
-        [active_item]="'Employee Salary'">
-      </app-breadcrumb>
+      <!-- Breadcrumb -->
     </div>
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
           <!-- En-tête de la table -->
           <div class="materialTableHeader">
-            <div class="left">
-              <ul class="header-buttons-left ms-0">
-                <li class="tbl-title">
-                  <h2>Employee Salary</h2>
-                </li>
-                <li class="tbl-search-box">
-                  <label for="search-input">
-                    <i class="material-icons search-icon">search</i>
-                  </label>
-                  <input
-                    id="search-input"
-                    placeholder="Search"
-                    type="text"
-                    #filter
-                    (keyup)="applyFilter($event)"
-                    class="browser-default search-field"
-                    aria-label="Search box">
-                </li>
-              </ul>
-            </div>
-            <div class="right">
-              <ul class="tbl-export-btn">
-                <!-- Bouton Ajouter -->
-                <li class="tbl-header-btn">
-                  <div class="m-l-10">
-                    <button
-                      mat-icon-button
-                      color="primary"
-                      (click)="openDialog()"
-                      matTooltip="Add Payroll">
-                      <mat-icon>add_circle_outline</mat-icon>
-                    </button>
-                  </div>
-                </li>
-                <!-- Bouton Refresh -->
-                <li class="tbl-header-btn">
-                  <div class="m-l-10">
-                    <button
-                      mat-icon-button
-                      (click)="load()"
-                      matTooltip="Refresh">
-                      <mat-icon>refresh</mat-icon>
-                    </button>
-                  </div>
-                </li>
-              </ul>
-            </div>
+            <!-- ... Gauche (Titre, Recherche) ... -->
+            <!-- ... Droite (Boutons Ajouter, Refresh) ... -->
           </div>
           <!-- Contenu de la table -->
           <div class="overflow-auto">
@@ -68,7 +20,7 @@
                 [dataSource]="dataSource"
                 matSort
                 class="advance-table mat-cell">
-                
+
                 <!-- Colonne Nom (sticky) -->
                 <ng-container matColumnDef="employeeName">
                   <mat-header-cell *matHeaderCellDef mat-sort-header sticky>
@@ -79,7 +31,20 @@
                     <span class="truncate-text">{{ row.employeeName }}</span>
                   </mat-cell>
                 </ng-container>
-                
+
+                <!-- *** AJOUT DE LA COLONNE EMAIL ICI *** -->
+                <ng-container matColumnDef="employeeEmail">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <span class="truncate-text">Email</span>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row" [matTooltip]="row.employeeEmail">
+                    <span class="mobile-label">Email:</span>
+                    <span class="truncate-text">{{ row.employeeEmail || 'N/A' }}</span> <!-- Gère si l'email est null -->
+                  </mat-cell>
+                </ng-container>
+                <!-- *** FIN DE L'AJOUT *** -->
+
+
                 <!-- Colonne Department -->
                 <ng-container matColumnDef="employeeDepartment">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -90,7 +55,7 @@
                     <span class="truncate-text">{{ row.employeeDepartment }}</span>
                   </mat-cell>
                 </ng-container>
-                
+
                 <!-- Colonne Basic Salary -->
                 <ng-container matColumnDef="basicSalary">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -98,10 +63,11 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row">
                     <span class="mobile-label">Basic Salary:</span>
-                    <span class="truncate-text">{{ row.basicSalary }}</span>
+                    <!-- Optionnel : Pipe 'currency' pour formater -->
+                    <span class="truncate-text">{{ row.basicSalary | currency:'EUR':'symbol':'1.2-2' }}</span>
                   </mat-cell>
                 </ng-container>
-                
+
                 <!-- Colonne Bonuses -->
                 <ng-container matColumnDef="bonuses">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -109,10 +75,10 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row">
                     <span class="mobile-label">Bonuses:</span>
-                    <span class="truncate-text">{{ row.bonuses }}</span>
+                    <span class="truncate-text">{{ row.bonuses | currency:'EUR':'symbol':'1.2-2' }}</span>
                   </mat-cell>
                 </ng-container>
-                
+
                 <!-- Colonne Deductions -->
                 <ng-container matColumnDef="deductions">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -120,10 +86,10 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row">
                     <span class="mobile-label">Deductions:</span>
-                    <span class="truncate-text">{{ row.deductions }}</span>
+                    <span class="truncate-text">{{ row.deductions | currency:'EUR':'symbol':'1.2-2' }}</span>
                   </mat-cell>
                 </ng-container>
-                
+
                 <!-- Colonne Total Salary -->
                 <ng-container matColumnDef="totalSalary">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -131,10 +97,10 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row">
                     <span class="mobile-label">Total Salary:</span>
-                    <span class="truncate-text">{{ row.totalSalary }}</span>
+                    <span class="truncate-text">{{ row.totalSalary | currency:'EUR':'symbol':'1.2-2' }}</span>
                   </mat-cell>
                 </ng-container>
-                
+
                 <!-- Colonne Pay Date -->
                 <ng-container matColumnDef="payDate">
                   <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -142,50 +108,53 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row">
                     <span class="mobile-label">Pay Date:</span>
-                    <span class="truncate-text">{{ row.payDate | date:'mediumDate' }}</span>
+                    <!-- Utilisation du pipe 'date' intégré d'Angular -->
+                    <span class="truncate-text">{{ row.payDate | date:'dd/MM/yyyy' }}</span> <!-- Format plus commun -->
                   </mat-cell>
                 </ng-container>
-                
+
                 <!-- Colonne Actions -->
-                <ng-container matColumnDef="actions">
-                  <mat-header-cell *matHeaderCellDef>
-                    Actions
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <button
-                      mat-icon-button
-                      color="accent"
-                      (click)="openDialog(row)">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      (click)="delete(row.payrollId)">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </mat-cell>
-                </ng-container>
-                
+                                <!-- Colonne Actions -->
+                                <ng-container matColumnDef="actions">
+                                  <mat-header-cell *matHeaderCellDef>
+                                    Actions
+                                  </mat-header-cell>
+                                  <mat-cell *matCellDef="let row">
+                                    <!-- Vérifiez cette ligne caractère par caractère -->
+                                    <button
+                                      mat-icon-button
+                                      color="accent"
+                                      (click)="$event.stopPropagation(); openDialog(row)"
+                                      matTooltip="Edit Payroll">
+                                      <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <!-- Vérifiez CETTE ligne caractère par caractère -->
+                                    <button
+                                      mat-icon-button
+                                      color="warn"
+                                      (click)="$event.stopPropagation(); delete(row.payrollId)"
+                                      matTooltip="Delete Payroll">
+                                      <mat-icon>delete</mat-icon>
+                                    </button>
+                                  </mat-cell>
+                                </ng-container>
                 <!-- Lignes d'en-tête et de données -->
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer"></mat-row>
+                <!-- Enlever style="cursor: pointer" si vous ne voulez pas d'action au clic sur la ligne -->
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
               </table>
-              
+
               <!-- Spinner de chargement -->
               <div *ngIf="isLoading" class="tbl-spinner">
-                <mat-progress-spinner
-                  color="primary"
-                  [diameter]="40"
-                  mode="indeterminate">
-                </mat-progress-spinner>
+                <!-- ... spinner ... -->
               </div>
-              
+
               <!-- Message "No results" -->
               <div *ngIf="!isLoading && dataSource.data.length === 0" class="no-results">
-                No results
+                No results found
               </div>
-              
+
               <!-- Paginator -->
               <mat-paginator
                 [length]="dataSource.filteredData.length"

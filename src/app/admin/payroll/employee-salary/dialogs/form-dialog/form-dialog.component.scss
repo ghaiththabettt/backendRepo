@@ -1,0 +1,47 @@
+// Dans le fichier SCSS approprié (global ou employee-salary.component.scss)
+
+// --- Variables (Optionnel mais recommandé) ---
+$sidebar-width: 280px; // <-- AJUSTEZ CETTE VALEUR à la largeur réelle de votre sidebar !
+$transition-speed: 0.3s; // Vitesse de l'animation
+
+// --- Styles pour la section de contenu principale ---
+section.content {
+  // Position par défaut (quand la sidebar est fermée)
+  margin-left: 0;
+  padding: 20px; // Ajoutez/ajustez le padding selon vos besoins
+  position: relative; // Souvent utile pour le contexte de layout
+  width: 100%; // Prend toute la largeur disponible par défaut
+  box-sizing: border-box; // Inclut padding et border dans la largeur/hauteur totale
+
+
+  // Animation douce lors du changement de marge
+  transition: margin-left $transition-speed ease-in-out, width $transition-speed ease-in-out; // Ajout transition pour la largeur aussi
+
+  
+  // Styles spécifiques lorsque la sidebar est visible
+  &.sidebar-visible {
+    // Décale le contenu vers la droite de la largeur de la sidebar
+    margin-left: $sidebar-width;
+
+    // Optionnel mais souvent nécessaire: Réduit la largeur du contenu pour compenser la marge
+    // Surtout si l'élément parent ne s'adapte pas.
+    width: calc(100% - #{$sidebar-width}); // Calcule la largeur restante
+  }
+}
+
+// --- Responsive (Très Important !) ---
+// Adaptez ces points de rupture (breakpoints) à ceux de votre application
+
+// Exemple : Sur les écrans plus petits, la sidebar pourrait passer en mode "overlay"
+// ou être cachée par défaut, donc on annule le décalage.
+@media (max-width: 991px) { // Exemple de breakpoint pour tablettes/mobiles
+  section.content {
+    // En mode overlay, la sidebar ne pousse pas le contenu
+    &.sidebar-visible {
+      margin-left: 0; // Pas de décalage
+      width: 100%;    // Le contenu reprend toute la largeur
+    }
+  }
+  // Vous auriez d'autres styles pour la sidebar elle-même ici
+  // (ex: position: fixed, z-index, etc.)
+}

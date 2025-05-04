@@ -15,3 +15,15 @@ export interface Employee {
   phoneNumber?: string;
   userType?: string; // Par exemple, 'ROLE_EMPLOYEE'
 }
+export interface EmployeeLitee {
+  id: number;
+  name: string; // Matches backend User.name
+  lastName: string; // Matches backend User.lastName
+  email?: string;
+  fullName: string; // Assuming your backend EmployeeLite or User has a fullName derived property
+}
+export interface EmployeeListItem {
+  id: number;
+  fullName: string;
+  departmentName: string;
+}

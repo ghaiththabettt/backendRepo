@@ -4,7 +4,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { catchError, map, tap } from 'rxjs/operators';
 import { Leaves, LeaveDTO } from './leaves.model'; // Import both
 import { environment } from 'environments/environment'; // Use environment for API URL
-
+import { SentimentDashboardData } from '../sentiment-dashboard-data.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -40,7 +40,10 @@ export class LeavesService {
   });
 }
 
-  
+getSentimentDashboardData(): Observable<SentimentDashboardData> {
+  return this.httpClient.get<SentimentDashboardData>(`${this.API_URL}/dashboard/sentiments`)
+    .pipe(catchError(this.handleError));
+}
   private mapModelToDto(leaves: Leaves): Partial<LeaveDTO> {
       
       return {

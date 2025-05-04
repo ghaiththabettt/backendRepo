@@ -18,6 +18,12 @@ import { EmployeeSalary } from './employee-salary.model';
 import { EmployeeSalaryService } from './employee-salary.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { EmployeeSalaryFormComponent } from './dialogs/form-dialog/form-dialog.component';
+import { Inject } from '@angular/core';
+// Correction : Importer MatDialogModule et MatDialogRef depuis @angular/material/dialog
+import {  MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators,  } from '@angular/forms';
+
+import { MatSelectModule } from '@angular/material/select';
 
 // Import du composant Breadcrumb
 import { BreadcrumbComponent } from '@shared/components/breadcrumb/breadcrumb.component';
@@ -55,22 +61,20 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class EmployeeSalaryComponent implements OnInit {
   displayedColumns: string[] = [
-    'employeeName',
-    'employeeDepartment',
-    'basicSalary',
-    'bonuses',
-    'deductions',
-    'totalSalary',
-    'payDate',
-    'actions'
+    'employeeName', // Affiché
+    'employeeEmail', // Affiché (ajouté)
+    'employeeDepartment', // Affiché
+    'basicSalary', // Affiché
+    'bonuses',     // Affiché
+    'deductions',  // Affiché
+    'totalSalary', // Affiché
+    'payDate',     // Affiché
+    'actions'      // Affiché
   ];
 
   dataSource = new MatTableDataSource<EmployeeSalary>([]);
   selection = new SelectionModel<EmployeeSalary>(true, []);
-
-  // Propriété pour afficher le spinner de chargement
   isLoading: boolean = false;
-  // Propriété pour gérer le décalage du contenu lorsque la sidebar est visible
   isSidebarVisible: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -78,53 +82,109 @@ export class EmployeeSalaryComponent implements OnInit {
   @ViewChild('filter') filter!: ElementRef;
 
   constructor(
-    private salaryService: EmployeeSalaryService,
+    private salaryService: EmployeeSalaryService, // Service Payroll
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.load();
+    this.load(); // Charge les données au démarrage
   }
 
+  // Charge ou recharge les données de la table
   load(): void {
-    this.isLoading = true;
-    this.salaryService.getAll().subscribe(
-      (data) => {
-        this.dataSource.data = data;
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this.isLoading = false;
+    this.isLoading = true; // Affiche le spinner
+    this.salaryService.getAll().subscribe({ // Appelle le service getAll (qui mappe les données)
+      next: (data) => {
+        this.dataSource.data = data; // Met à jour les données de la table
+        // Configure le paginator et le tri après avoir reçu les données
+        if (this.paginator) this.dataSource.paginator = this.paginator;
+        if (this.sort) this.dataSource.sort = this.sort;
+        this.isLoading = false; // Cache le spinner
       },
-      error => {
-        console.error(error);
-        this.isLoading = false;
+      error: (error) => { // Gestion d'erreur
+        console.error("Erreur lors du chargement des fiches de paie:", error);
+        this.snackBar.open('Error loading payroll data', 'Error', { duration: 3000 });
+        this.isLoading = false; // Cache le spinner même en cas d'erreur
       }
-    );
+    });
   }
 
+  // Applique le filtre sur la table
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage(); // Retourne à la première page après filtrage
+    }
   }
 
+  // Ouvre le dialogue pour ajouter ou modifier une fiche de paie
   openDialog(salary?: EmployeeSalary): void {
     const dialogRef = this.dialog.open(EmployeeSalaryFormComponent, {
-      width: '600px',
-      data: salary || null
+      width: '600px', // Ajustez la largeur si nécessaire
+      disableClose: true, // Empêche la fermeture en cliquant à l'extérieur
+      data: salary ? { ...salary } : null // Passe une copie des données pour l'édition, ou null pour l'ajout
     });
-    dialogRef.afterClosed().subscribe((result) => {
+
+    dialogRef.afterClosed().subscribe((result: EmployeeSalary | undefined) => {
+      // 'result' contient les données du formulaire si sauvegardé, sinon undefined
       if (result) {
-        this.load();
-        this.snackBar.open('Saved successfully', '', { duration: 2000 });
+        this.isLoading = true; // Affiche le spinner pendant l'opération
+        if (result.payrollId) {
+          // --- Mise à jour ---
+          this.salaryService.update(result).subscribe({
+            next: () => {
+              this.load(); // Recharge les données après succès
+              this.snackBar.open('Payroll updated successfully', 'OK', { duration: 3000 });
+            },
+            error: (err) => {
+              console.error("Erreur lors de la mise à jour:", err);
+              this.snackBar.open('Error updating payroll', 'Error', { duration: 3000 });
+              this.isLoading = false;
+            }
+          });
+        } else {
+          // --- Ajout ---
+          this.salaryService.add(result).subscribe({
+            next: () => {
+              this.load(); // Recharge les données après succès
+              this.snackBar.open('Payroll added successfully', 'OK', { duration: 3000 });
+            },
+            error: (err) => {
+              console.error("Erreur lors de l'ajout:", err);
+              // Affichez un message plus spécifique si possible (ex: err.error.message)
+              const errorMsg = err.error?.message || 'Error adding payroll';
+              this.snackBar.open(errorMsg, 'Error', { duration: 3000 });
+              this.isLoading = false;
+            }
+          });
+        }
       }
+       // Si result est undefined (dialogue annulé), ne fait rien.
     });
   }
 
-  delete(id: number): void {
-    this.salaryService.delete(id).subscribe(() => {
-      this.load();
-      this.snackBar.open('Deleted successfully', '', { duration: 2000 });
+  // Supprime une fiche de paie
+  delete(id: number | undefined): void {
+    if (id === undefined) {
+      console.error("Tentative de suppression avec un ID indéfini.");
+      return; // Ne rien faire si l'ID est indéfini
+    }
+    // Optionnel: Ajouter une confirmation avant suppression
+    // if (confirm('Are you sure you want to delete this payroll entry?')) { ... }
+
+    this.isLoading = true;
+    this.salaryService.delete(id).subscribe({
+      next: () => {
+        this.load(); // Recharge les données après succès
+        this.snackBar.open('Payroll deleted successfully', 'OK', { duration: 3000 });
+      },
+      error: (err) => {
+        console.error("Erreur lors de la suppression:", err);
+        this.snackBar.open('Error deleting payroll', 'Error', { duration: 3000 });
+        this.isLoading = false;
+      }
     });
   }
 }

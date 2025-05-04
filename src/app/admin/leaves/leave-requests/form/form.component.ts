@@ -15,7 +15,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import {  Subscription } from 'rxjs';
 import { startWith, takeUntil, map as rxMap, debounceTime } from 'rxjs/operators';
-import { EmployeeService, EmployeeListItem } from 'app/admin/leaves/leave-requests/employee.Service'; // Ajustez le chemin si nécessaire
+import { EmployeeService } from 'app/admin/leaves/leave-requests/employee.service'; // Ajustez le chemin si nécessaire
+import { EmployeeListItem} from 'models/employee.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Importer le spinner
 import { Observable, Subject, combineLatest, of } from 'rxjs'; // Import 'of'
 import { map , switchMap, filter } from 'rxjs/operators'; // Import 'switchMap', 'filter'

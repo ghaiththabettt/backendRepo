@@ -1,98 +1,200 @@
+<!-- src/app/components/dashboard/dashboard2/dashboard2.component.html -->
 <section class="content">
   <div class="content-block">
+    <!-- ================== EN-TÊTE ================== -->
     <div class="block-header">
       <app-breadcrumb [title]="title" [items]="['Accueil']" [active_item]="title"></app-breadcrumb>
     </div>
 
-    <!-- Indicateur chargement/erreur -->
-    <div *ngIf="isLoading" class="loading-indicator">
+    <!-- ================== CHARGEMENT / ERREUR ================== -->
+    <div *ngIf="isLoading" class="loading-indicator" style="text-align: center; padding: 30px;">
       <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-      <p>Chargement des données...</p>
+      <p class="mt-2">Loading dashboard data...</p>
     </div>
-    <div *ngIf="errorMessage && !isLoading" class="error-message">
-      <mat-icon color="warn">error_outline</mat-icon>
-      <span>{{ errorMessage }}</span>
-      <button mat-icon-button (click)="loadDashboardData()" matTooltip="Réessayer"><mat-icon>refresh</mat-icon></button>
+    <div *ngIf="errorMessage && !isLoading" class="error-message alert alert-danger d-flex align-items-center" role="alert" style="margin: 15px;">
+      <mat-icon color="warn" class="me-2">error_outline</mat-icon>
+      <span class="me-auto"><strong>Error:</strong> {{ errorMessage }}</span>
+      <button mat-icon-button (click)="loadDashboardData()" matTooltip="Retry Load" color="warn" class="ms-2">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button type="button" class="btn-close" aria-label="Close" (click)="errorMessage = null" style="background: none; border: none; font-size: 1.2rem; padding-left: 10px;">×</button>
     </div>
 
-    <!-- Contenu principal -->
+
+    <!-- ================== CONTENU PRINCIPAL (SI PAS DE CHARGEMENT) ================== -->
     <div *ngIf="!isLoading">
-      <!-- Cartes Statistiques (Utilise les données calculées) -->
-      <div class="row">
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12"> <app-info-box1 cardClass="l-bg-cyan-dark" iconClass="fas fa-users" title="Employés Total" [value]="totalEmployees" ></app-info-box1> </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12"> <app-info-box1 cardClass="l-bg-purple-dark" iconClass="fas fa-building" title="Départements" [value]="totalDepartments" ></app-info-box1> </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12"> <app-info-box1 cardClass="l-bg-orange-dark" iconClass="fas fa-calendar-alt" title="Congés en Attente" [value]="totalPendingLeaves" ></app-info-box1> </div>
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12"> <app-info-box1 cardClass="l-bg-green-dark" iconClass="fas fa-clock" title="Heures Travaillées" [value]="totalTimeEntriesHours.toFixed(0) + 'h'" ></app-info-box1> </div>
-      </div>
 
-     <!-- Section Graphiques (visible si pas d'erreur) -->
+      <!-- == Rangée des InfoBox == -->
+      <div class="row">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+          <app-info-box1 cardClass="l-bg-cyan-dark" iconClass="fas fa-users" title="Total Employees" [value]="totalEmployees"></app-info-box1>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+          <app-info-box1 cardClass="l-bg-purple-dark" iconClass="fas fa-building" title="Departments" [value]="totalDepartments"></app-info-box1>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+           <!-- Utilise la propriété calculée totalPendingLeaves -->
+           <app-info-box1 cardClass="l-bg-orange-dark" iconClass="fas fa-calendar-alt" title="Pending Leaves" [value]="totalPendingLeaves"></app-info-box1>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+          <app-info-box1 cardClass="l-bg-green-dark" iconClass="fas fa-clock" title="Total Worked Hours" [value]="totalTimeEntriesHours.toFixed(0) + 'h'"></app-info-box1>
+        </div>
+      </div> <!-- Fin row InfoBox -->
+
+     <!-- ================== Section Graphiques (SI PAS D'ERREUR) ================== -->
      <ng-container *ngIf="!errorMessage">
-        <!-- Graphique Barres : Heures travaillées -->
+
+        <!-- == Rangée Graphique Barres : Heures travaillées == -->
         <div class="row clearfix">
           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <mat-card>
-              <mat-card-header class="header-style">
-                <mat-card-title>{{ timeEntryChartOptions?.title?.text || 'Suivi du Temps Travaillé' }}</mat-card-title>
-                <mat-button-toggle-group #timeFilterGroup="matButtonToggleGroup" [(ngModel)]="selectedTimeFilter" (ngModelChange)="updateTimeFilter($event)" aria-label="Filtre de Temps">
-                  <mat-button-toggle value="day">Jour</mat-button-toggle> <mat-button-toggle value="week">Semaine</mat-button-toggle> <mat-button-toggle value="month">Mois</mat-button-toggle> <mat-button-toggle value="year">Année</mat-button-toggle>
+            <mat-card class="mb-3"> <!-- Marge basse -->
+              <mat-card-header class="header-style d-flex justify-content-between align-items-center flex-wrap">
+                <mat-card-title class="mb-2 mb-md-0">{{ timeEntryChartOptions?.title?.text || 'Work Time Tracking' }}</mat-card-title>
+                <mat-button-toggle-group #timeFilterGroup="matButtonToggleGroup" [(ngModel)]="selectedTimeFilter" (ngModelChange)="updateTimeFilter($event)" aria-label="Time Filter" class="button-toggle-sm">
+                  <mat-button-toggle value="day">Day</mat-button-toggle>
+                  <mat-button-toggle value="week">Week</mat-button-toggle>
+                  <mat-button-toggle value="month">Month</mat-button-toggle>
+                  <mat-button-toggle value="year">Year</mat-button-toggle>
                 </mat-button-toggle-group>
               </mat-card-header>
               <mat-card-content>
-                 <div *ngIf="showTimeEntryChart; else noTimeData">
-                     <apx-chart #timeEntryChart [series]="timeEntryChartOptions.series!" [chart]="timeEntryChartOptions.chart!" [xaxis]="timeEntryChartOptions.xaxis!" [yaxis]="timeEntryChartOptions.yaxis!" [dataLabels]="timeEntryChartOptions.dataLabels!" [stroke]="timeEntryChartOptions.stroke!" [colors]="timeEntryChartOptions.colors!" [tooltip]="timeEntryChartOptions.tooltip!" [legend]="timeEntryChartOptions.legend!" [grid]="timeEntryChartOptions.grid!" [title]="timeEntryChartOptions.title!" [fill]="timeEntryChartOptions.fill!" [plotOptions]="timeEntryChartOptions.plotOptions!" [responsive]="timeEntryChartOptions.responsive!">
+                 <div *ngIf="showTimeEntryChart; else noTimeData" class="chart-container">
+                     <apx-chart #timeEntryChart
+                        [series]="timeEntryChartOptions.series!"
+                        [chart]="timeEntryChartOptions.chart!"
+                        [xaxis]="timeEntryChartOptions.xaxis!"
+                        [yaxis]="timeEntryChartOptions.yaxis!"
+                        [dataLabels]="timeEntryChartOptions.dataLabels!"
+                        [stroke]="timeEntryChartOptions.stroke!"
+                        [colors]="timeEntryChartOptions.colors!"
+                        [tooltip]="timeEntryChartOptions.tooltip!"
+                        [legend]="timeEntryChartOptions.legend!"
+                        [grid]="timeEntryChartOptions.grid!"
+                        [title]="timeEntryChartOptions.title!"
+                        [fill]="timeEntryChartOptions.fill!"
+                        [plotOptions]="timeEntryChartOptions.plotOptions!"
+                        [responsive]="timeEntryChartOptions.responsive!">
                      </apx-chart>
                  </div>
-                 <ng-template #noTimeData> <div class="no-data-message">Aucune donnée de pointage à afficher pour la période.</div> </ng-template>
+                 <ng-template #noTimeData>
+                    <div class="no-data-message">No time tracking data to display for the selected period.</div>
+                 </ng-template>
               </mat-card-content>
             </mat-card>
           </div>
-        </div>
+        </div> <!-- Fin row TimeEntry Chart -->
 
-        <!-- Graphiques Circulaires -->
+        <!-- == Rangée pour les graphiques Départements & Positions (EXISTANTS) == -->
         <div class="row clearfix">
-          <!-- Types de Congés -->
-          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-            <mat-card>
-              <mat-card-header> <mat-card-title>{{ leaveTypePieOptions?.title?.text || 'Types de Congés' }}</mat-card-title> </mat-card-header>
+          <!-- Départements Pie -->
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+            <mat-card class="mb-3">
+              <mat-card-header> <mat-card-title>{{ departmentPieOptions?.title?.text || 'Employees by Department'}}</mat-card-title> </mat-card-header>
               <mat-card-content>
-                 <div *ngIf="showLeaveTypePie; else noLeaveData">
-                    <apx-chart [series]="leaveTypePieOptions.series!" [chart]="leaveTypePieOptions.chart!" [labels]="leaveTypePieOptions.labels!" [colors]="leaveTypePieOptions.colors!" [responsive]="leaveTypePieOptions.responsive!" [dataLabels]="leaveTypePieOptions.dataLabels!" [legend]="leaveTypePieOptions.legend!" [tooltip]="leaveTypePieOptions.tooltip!" class="apex-pie-center"></apx-chart>
-                 </div>
-                 <ng-template #noLeaveData> <div class="no-data-message">Aucune donnée de congé disponible.</div> </ng-template>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          <!-- Départements -->
-          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-            <mat-card>
-              <mat-card-header> <mat-card-title>{{ departmentPieOptions?.title?.text || 'Répartition par Département'}}</mat-card-title> </mat-card-header>
-              <mat-card-content>
-                  <div *ngIf="showDepartmentPie; else noDeptData">
-                      <apx-chart [series]="departmentPieOptions.series!" [chart]="departmentPieOptions.chart!" [labels]="departmentPieOptions.labels!" [colors]="departmentPieOptions.colors!" [responsive]="departmentPieOptions.responsive!" [dataLabels]="departmentPieOptions.dataLabels!" [legend]="departmentPieOptions.legend!" [tooltip]="departmentPieOptions.tooltip!" class="apex-pie-center"></apx-chart>
+                  <div *ngIf="showDepartmentPie; else noDeptData" class="chart-container">
+                      <apx-chart #deptPieChart
+                         [series]="departmentPieOptions.series!"
+                         [chart]="departmentPieOptions.chart!"
+                         [labels]="departmentPieOptions.labels!"
+                         [colors]="departmentPieOptions.colors!"
+                         [responsive]="departmentPieOptions.responsive!"
+                         [dataLabels]="departmentPieOptions.dataLabels!"
+                         [legend]="departmentPieOptions.legend!"
+                         [tooltip]="departmentPieOptions.tooltip!"
+                         class="apex-pie-center">
+                      </apx-chart>
                   </div>
-                  <ng-template #noDeptData> <div class="no-data-message">Aucune donnée de département à afficher.</div> </ng-template>
+                  <ng-template #noDeptData> <div class="no-data-message">No department data to display.</div> </ng-template>
                 </mat-card-content>
             </mat-card>
           </div>
-          <!-- Postes -->
-          <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
-            <mat-card>
-              <mat-card-header> <mat-card-title>{{ jobPositionPieOptions?.title?.text || 'Répartition par Poste' }}</mat-card-title> </mat-card-header>
+          <!-- Postes Pie -->
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+            <mat-card class="mb-3">
+              <mat-card-header> <mat-card-title>{{ jobPositionPieOptions?.title?.text || 'Employees by Position' }}</mat-card-title> </mat-card-header>
               <mat-card-content>
-                 <!-- Utilise le booléen showJobPositionPie -->
-                 <div *ngIf="showJobPositionPie; else noJobData">
-                    <apx-chart [series]="jobPositionPieOptions.series!" [chart]="jobPositionPieOptions.chart!" [labels]="jobPositionPieOptions.labels!" [colors]="jobPositionPieOptions.colors!" [responsive]="jobPositionPieOptions.responsive!" [dataLabels]="jobPositionPieOptions.dataLabels!" [legend]="jobPositionPieOptions.legend!" [tooltip]="jobPositionPieOptions.tooltip!" class="apex-pie-center"></apx-chart>
+                 <div *ngIf="showJobPositionPie; else noJobData" class="chart-container">
+                    <apx-chart #posPieChart
+                       [series]="jobPositionPieOptions.series!"
+                       [chart]="jobPositionPieOptions.chart!"
+                       [labels]="jobPositionPieOptions.labels!"
+                       [colors]="jobPositionPieOptions.colors!"
+                       [responsive]="jobPositionPieOptions.responsive!"
+                       [dataLabels]="jobPositionPieOptions.dataLabels!"
+                       [legend]="jobPositionPieOptions.legend!"
+                       [tooltip]="jobPositionPieOptions.tooltip!"
+                       class="apex-pie-center">
+                    </apx-chart>
                  </div>
-                 <ng-template #noJobData> <div class="no-data-message">Aucune donnée de poste disponible.</div> </ng-template>
+                 <ng-template #noJobData> <div class="no-data-message">No position data available.</div> </ng-template>
               </mat-card-content>
             </mat-card>
           </div>
-        </div>
+        </div><!-- Fin row Department/Position -->
+
+        <!-- =========================================================== -->
+        <!-- == NOUVELLE Rangée pour les graphiques Sentiment & Motivation == -->
+        <!-- =========================================================== -->
+        <div class="row clearfix">
+           <!-- Analyse Sentiment Congés (Pie Chart) -->
+           <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12"> <!-- Taille ajustée -->
+             <mat-card class="mb-3">
+               <mat-card-header>
+                 <mat-card-title>{{ sentimentPieChartOptions?.title?.text || 'Leave Sentiment Analysis' }}</mat-card-title>
+               </mat-card-header>
+               <mat-card-content>
+                 <div *ngIf="showSentimentPie; else noSentimentData" class="chart-container">
+                   <apx-chart #sentimentPieChart
+                         [series]="sentimentPieChartOptions.series!"
+                         [chart]="sentimentPieChartOptions.chart!"
+                         [labels]="sentimentPieChartOptions.labels!"
+                         [colors]="sentimentPieChartOptions.colors!"
+                         [responsive]="sentimentPieChartOptions.responsive!"
+                         [dataLabels]="sentimentPieChartOptions.dataLabels!"
+                         [legend]="sentimentPieChartOptions.legend!"
+                         [tooltip]="sentimentPieChartOptions.tooltip!"
+                         class="apex-pie-center">
+                   </apx-chart>
+                 </div>
+                 <ng-template #noSentimentData>
+                   <div class="no-data-message">No sentiment data available.</div>
+                 </ng-template>
+               </mat-card-content>
+             </mat-card>
+           </div>
+
+           <!-- Tendance Motivation (Line Chart) -->
+           <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12"> <!-- Taille ajustée -->
+             <mat-card class="mb-3">
+               <mat-card-header>
+                 <mat-card-title>{{ motivationLineChartOptions?.title?.text || 'Motivation Trend (Leaves)' }}</mat-card-title>
+               </mat-card-header>
+               <mat-card-content>
+                 <div *ngIf="showMotivationLine; else noMotivationData" class="chart-container">
+                   <apx-chart #motivationLineChart
+                         [series]="motivationLineChartOptions.series!"
+                         [chart]="motivationLineChartOptions.chart!"
+                         [xaxis]="motivationLineChartOptions.xaxis!"
+                         [yaxis]="motivationLineChartOptions.yaxis!"
+                         [stroke]="motivationLineChartOptions.stroke!"
+                         [markers]="motivationLineChartOptions.markers!"
+                         [colors]="motivationLineChartOptions.colors!"
+                         [tooltip]="motivationLineChartOptions.tooltip!"
+                         [grid]="motivationLineChartOptions.grid!"
+                         [title]="motivationLineChartOptions.title!"
+                         [dataLabels]="motivationLineChartOptions.dataLabels!">
+                   </apx-chart>
+                 </div>
+                 <ng-template #noMotivationData>
+                   <div class="no-data-message">Insufficient data to display motivation trend.</div>
+                 </ng-template>
+               </mat-card-content>
+             </mat-card>
+           </div>
+        </div> <!-- Fin row Sentiment/Motivation -->
+
       </ng-container> <!-- Fin *ngIf="!errorMessage" -->
 
-       <!-- SUPPRESSION DES SECTIONS OBSOLÈTES -->
-       <!-- Pas de Recent Comments, Progress Table, Earning Source, ou Table Card -->
-
     </div> <!-- Fin de *ngIf="!isLoading" -->
-  </div>
+  </div><!-- Fin content-block -->
 </section>

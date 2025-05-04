@@ -5,5 +5,8 @@ export interface Department {
     jobPositionIds?: number[];
     trainingIds?: number[];
     policyIds?: number[];
+    phone?: string;
+  emailDept?: string;
+  
   }
   

@@ -4,7 +4,13 @@ import { Employee } from '../models/employee.model';
 import { EmployeeLite } from '../app/admin/contrats/contrat.model';
 import { Observable } from 'rxjs';
 import { AuthService } from 'app/core/service/auth.service'; // Assurez-vous que AuthService est importé
-
+export interface EmployeeLitee {
+  id: number;
+  name: string; // Matches backend User.name
+  lastName: string; // Matches backend User.lastName
+  email?: string;
+  fullName: string; // Assuming your backend EmployeeLite or User has a fullName derived property
+}
 @Injectable({
   providedIn: 'root'
 })
